@@ -1,12 +1,6 @@
-/**
- * Based off code created by:
- * dmarcos / https://github.com/dmarcos
- * hawksley / https://github.com/hawksley 
- */
-
 THREE.Controls = function(done){
-    var speed = 0.2;
-    var rotateSpeed = 1.0;
+    var moveSpeed = 0.2;
+    var rotateSpeed = 0.5;
 
     this.defaultPosition = new THREE.Vector3();
     this.manualRotation = new THREE.Quaternion();
@@ -42,20 +36,16 @@ THREE.Controls = function(done){
         var newTime = Date.now();
         this.updateTime = newTime;
 
-        //--------------------------------------------------------------------
-        // Translation
-        //--------------------------------------------------------------------
-        //TODO: Beautify
+
+
+        // Move
         var deltaTime = (newTime - oldTime) * 0.001;
         var deltaPosition = new THREE.Vector3();
 
-        var controllerMove = 0;
-        if(g_controllerMove){ controllerMove = 1; }
-
-        if(this.manualMoveRate[0] !== 0 || this.manualMoveRate[1] !== 0 || this.manualMoveRate[2] !== 0 || controllerMove !== 0){
-            deltaPosition = getFwdVector().multiplyScalar(speed * deltaTime * (this.manualMoveRate[0] + controllerMove)).add(
-                getRightVector().multiplyScalar(speed  * deltaTime * this.manualMoveRate[1])).add(
-                getUpVector().multiplyScalar(speed  * deltaTime * this.manualMoveRate[2]));
+        if(this.manualMoveRate[0] !== 0 || this.manualMoveRate[1] !== 0 || this.manualMoveRate[2] !== 0){
+            deltaPosition = getFwdVector().multiplyScalar(moveSpeed * deltaTime * this.manualMoveRate[0]).add(
+                getRightVector().multiplyScalar(moveSpeed  * deltaTime * this.manualMoveRate[1])).add(
+                getUpVector().multiplyScalar(moveSpeed  * deltaTime * this.manualMoveRate[2]));
         }
         if(deltaPosition !== undefined){
             deltaPosition.multiplyScalar(guiInfo.eToHScale);
@@ -70,9 +60,9 @@ THREE.Controls = function(done){
            g_invCellBoost.getInverse(g_cellBoost);
         }
 
-        //--------------------------------------------------------------------
+
+
         // Rotation
-        //--------------------------------------------------------------------
         var deltaRotation = new THREE.Quaternion(this.manualRotateRate[0] * rotateSpeed * deltaTime, this.manualRotateRate[1] * rotateSpeed * deltaTime, this.manualRotateRate[2] * rotateSpeed * deltaTime, 1.0);
         deltaRotation.normalize();
         if(deltaRotation !== undefined){
@@ -80,6 +70,8 @@ THREE.Controls = function(done){
             m = new THREE.Matrix4().makeRotationFromQuaternion(deltaRotation.inverse());
             g_currentBoost.premultiply(m);
         }
+
+
 
         g_currentBoost.gramSchmidt(g_geometry);
     };

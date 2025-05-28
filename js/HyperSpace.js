@@ -456,7 +456,6 @@ var animate = function(){
 	g_material.uniforms.maxSteps.value = maxSteps;
 
 	g_controls.update();
-	THREE.VRController.update();
 
 	g_effect.render(scene, camera, animate);
 }
