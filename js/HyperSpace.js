@@ -255,8 +255,11 @@ var init = function(){
 	scene = new THREE.Scene();
 	renderer = new THREE.WebGLRenderer();
 	document.body.appendChild(renderer.domElement);
+	
 	g_screenResolution = new THREE.Vector2(window.innerWidth, window.innerHeight);
-	g_screenShotResolution = new THREE.Vector2(window.innerWidth, window.innerHeight);
+	//g_screenShotResolution = new THREE.Vector2(window.innerWidth, window.innerHeight);
+	g_screenShotResolution = new THREE.Vector2(2560, 1440);
+
 	g_effect = new THREE.VREffect(renderer);
 	camera = new THREE.OrthographicCamera(-1,1,1,-1,1/Math.pow(2,53),1);
 	g_controls = new THREE.Controls();

@@ -16,6 +16,8 @@ function onkey(event){
 		guiInfo.resetPosition();
 	else if(event.keyCode == 9) // Tab
 		g_effect.setFullScreen(true);
+	else if(event.keyCode == 13) // Enter
+		guiInfo.TakeSS();
 }
 
 window.addEventListener("keydown", onkey, false);

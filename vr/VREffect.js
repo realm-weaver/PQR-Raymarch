@@ -1,30 +1,5 @@
-/**
- * @author dmarcos / https://github.com/dmarcos
- * @author hawksley / https://github.com/hawksley (added phone VR support, and fixed full screen for all devices)
- *
- * It handles stereo rendering
- * If mozGetVRDevices and getVRDevices APIs are not available it gracefuly falls back to a
- * regular renderer
- *
- * The HMD supported is the Oculus DK1 and The Web API doesn't currently allow
- * to query for the display resolution (only the chrome API allows it).
- * The dimensions of the screen are temporarly hardcoded (1280 x 800).
- *
- * For VR mode to work it has to be used with the Oculus enabled builds of Firefox or Chrome:
- *
- * Firefox:
- *
- * OSX: http://people.mozilla.com/~vladimir/vr/firefox-33.0a1.en-US.mac.dmg
- * WIN: http://people.mozilla.com/~vladimir/vr/firefox-33.0a1.en-US.win64-x86_64.zip
- *
- * Chrome builds:
- *
- * https://drive.google.com/folderview?id=0BzudLt22BqGRbW9WTHMtOWMzNjQ&usp=sharing#list
- *
- */
-THREE.VREffect = function ( renderer, done ) {
-	// var frameData = new VRFrameData();
 
+THREE.VREffect = function ( renderer, done ) {
 	this._renderer = renderer;
 
 	this._init = function() {

@@ -17,16 +17,6 @@ var g_targetFPS = {value:27.5};
 
 var guiInfo;
 
-function updateEyes(){
-	g_effect.leftEyeTranslation.x = guiInfo.eToHScale * guiInfo.halfIpDistance;
-	g_effect.rightEyeTranslation.x = guiInfo.eToHScale * -guiInfo.halfIpDistance;
-
-	g_stereoBoosts[0] = translateByVector(g_geometry,g_effect.leftEyeTranslation);
-	g_stereoBoosts[1] = translateByVector(g_geometry,g_effect.rightEyeTranslation);
-	g_effect.getEyeRotation(g_effect.leftEyeTranslation.x, guiInfo.rotateEyes);
-	g_material.uniforms.stereoBoosts.value = g_stereoBoosts;
-}
-
 function getGeometryFrag()
 {
 	geometryFragIdx = 0;
@@ -211,11 +201,8 @@ var initGui = function(){
 		cutoutRadius:0.0,
 		eToHScale:5.0,
 		fov:90,
-		toggleStereo:false,
-		rotateEyes:false,
 		autoSteps:true,
 		maxStepsPower: 6.0,
-		halfIpDistance: 0.03200000151991844,
 		falloffModel: 1,
 		renderShadows: 0,
 		shadowSoftness: 0,
@@ -263,14 +250,10 @@ var initGui = function(){
 	screenshotFolder.add(guiInfo, 'TakeSS').name("Take Screenshot");
 	//debug settings ---------------------------------
 	var debugFolder = gui.addFolder('Debug');
-	var stereoFolder = debugFolder.addFolder('Stereo');
 	var debugUIController = debugFolder.add(guiInfo, 'toggleUI').name("Toggle Debug UI");
 	debugFolder.add(guiInfo, 'autoSteps').name("Auto Adjust Step Count");
 	var maxstepsController = debugFolder.add(guiInfo, 'maxStepsPower', 2, 10).name("Max Steps Power");
 	debugFolder.add(g_targetFPS, 'value', 15, 90).name("Target FPS");
-	var switchToStereo = stereoFolder.add(guiInfo, 'toggleStereo').name("Toggle Stereo");
-	var rotateController = stereoFolder.add(guiInfo, 'rotateEyes').name("Rotate Eyes");
-	var pupilDistanceController = stereoFolder.add(guiInfo, 'halfIpDistance').name("Interpupiliary Distance");
 
 	// ------------------------------
 	// UI Controllers
@@ -335,10 +318,6 @@ var initGui = function(){
 		updateUniformsFromUI();
 	});
 
-	scaleController.onFinishChange(function(value) {
-		updateEyes();
-	});
-
 	fovController.onChange(function(value){
 		g_material.uniforms.fov.value = value;
 	});
@@ -370,36 +349,6 @@ var initGui = function(){
 			crosshairLeft.style.visibility = 'hidden';
 			crosshairRight.style.visibility = 'hidden';
 		}
-	});
-
-	switchToStereo.onFinishChange(function(value){
-		var crosshair = document.getElementById("crosshair");
-		var crosshairLeft = document.getElementById("crosshairLeft");
-		var crosshairRight = document.getElementById("crosshairRight");
-		if(guiInfo.toggleUI){
-			if(value){
-				g_material.uniforms.isStereo.value = 1;
-				crosshairLeft.style.visibility = 'visible';
-				crosshairRight.style.visibility = 'visible';
-				crosshair.style.visibility = 'hidden';
-			}
-			else{
-				g_material.uniforms.isStereo.value = 0;
-				g_material.uniforms.screenResolution.value.x = window.innerWidth;
-				g_material.uniforms.screenResolution.value.y = window.innerHeight;
-				crosshairLeft.style.visibility = 'hidden';
-				crosshairRight.style.visibility = 'hidden';
-				crosshair.style.visibility = 'visible';
-			}
-		}
-	});
-
-	pupilDistanceController.onFinishChange(function(value){
-		updateEyes();
-	});
-
-	rotateController.onFinishChange(function(value) {
-		updateEyes();
 	});
 
 	sceneController.onFinishChange(function(index){
