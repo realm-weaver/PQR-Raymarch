@@ -38,8 +38,8 @@ uniform float maxDist;
 //--------------------------------------------
 //Lighting Variables & Global Object Variables
 //--------------------------------------------
-uniform vec4 lightPositions[4];
-uniform vec4 lightIntensities[5]; //w component is the light's attenuation -- 5 for our controller
+uniform vec4 lightPositions[NUM_LIGHTS];
+uniform vec4 lightIntensities[NUM_LIGHTS + 1]; //w component is the light's attenuation -- 5 for our controller
 uniform int attnModel;
 uniform bool renderShadows[2];
 uniform float shadSoft;

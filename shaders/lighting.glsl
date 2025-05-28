@@ -137,7 +137,7 @@ vec3 phongModel(mat4 invObjectBoost, bool isGlobal, mat4 globalTransMatrix){
   //Lighting Calculations
   //--------------------------------------------
   //Standard Light Objects
-  for(int i = 0; i<4; i++){
+  for(int i = 0; i<NUM_LIGHTS; i++){
     if(lightIntensities[i].w != 0.0){
       TLP = lightPositions[i]*globalTransMatrix;
       color += lightingCalculations(SP, TLP, V, baseColor, lightIntensities[i], globalTransMatrix);

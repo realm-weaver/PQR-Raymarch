@@ -1,6 +1,6 @@
 THREE.Controls = function(done){
     var moveSpeed = 0.2;
-    var rotateSpeed = 0.5;
+    var rotateSpeed = 0.4;
 
     this.defaultPosition = new THREE.Vector3();
     this.manualRotation = new THREE.Quaternion();

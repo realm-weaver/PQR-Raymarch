@@ -1,82 +1,80 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Basic Page Needs
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <meta charset="utf-8">
-  <title>Hyperbolic Raymarching</title>
-  <!-- Metas
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-  <!-- Style
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <style>
-      body {
-          background-color: #000;
-          color: #fff;
-          margin: 0px;
-          padding: 0;
-          overflow: hidden;
+	<meta charset="utf-8">
+	<title>Hyperbolic Raymarching</title>
+
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="icon" type="image/png" href="images/favicon.png">
+
+	<style>
+			body {
+				  background-color: #000000;
+					color: #ffffff;
+					margin: 0;
+					padding: 0;
+					overflow: hidden;
+			}
+
+      #hyperbolic-canvas {
+        position: fixed;
+        transform: scale(0.5) translate(-50%, -50%);
       }
-  </style>
-  <!-- Favicon
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <link rel="icon" type="image/png" href="images/favicon.png">
+
+	</style>
+
 </head>
 
 <body>
-  <div id="fps" style="position: absolute; top:30px; left:30px; width:30px; text-align:center; z-index: 100; display:block;background-color:black">
-    0.0
+  <canvas id="hyperbolic-canvas"></canvas>
+  <div>
+  	<div id="fps" style="position: absolute; top:30px; left:30px; width:30px; text-align:center; z-index: 100; display:block;background-color:black">0.0</div>
+
+  	<img id="crosshair" src="images/crosshair.png" style ="height:15px; width: 15px; position:absolute; top:50%; left:50%; margin-top:-7.5px; margin-left:-7.5px"/>
+
+  	<div id="about" style="position: absolute; bottom: 30px; left:30px; font-weight: bold; z-index:100">
+  		<a href="https://github.com/realm-weaver/PQR-Raymarch">About</a>
+  	</div>
+  	
+  	<div id="debug-console" style="position: absolute; bottom: 30px; left: 25%; width: 50%; font-size: 16px; max-height: 200px; overflow-y: scroll; padding: 20px; background-color: rgba(0,0,0,0.5)"></div>
   </div>
-
-  <img id="crosshair" src="images/crosshair.png" style ="height:15px; width: 15px; position:absolute; top:50%; left:50%; margin-top:-7.5px; margin-left:-7.5px"/>
-
-  <img id="crosshairLeft" src="images/crosshair.png" style ="height:15px; width: 15px; position:absolute; top:50%; left:25%; margin-top:-7.5px; margin-left:-7.5px; visibility: hidden"/>
-
-  <img id="crosshairRight" src="images/crosshair.png" style ="height:15px; width: 15px; position:absolute; top:50%; left:75%; margin-top:-7.5px; margin-left:-7.5px; visibility: hidden"/>
-
-  <div id="about" style="position: absolute; bottom: 30px; left:30px; font-weight: bold; z-index:100">
-    <a href="https://github.com/realm-weaver/PQR-Raymarch">About</a>
-  </div>
-
-  <img id="vr-icon" src="images/vr-icon.png" height="50px"
-    style="
-      position: fixed;
-      bottom: 30px;
-      right: 50px;
-      display: none;"
-  />
-  
-  <div id="debug-console" style="position: absolute; bottom: 30px; left: 25%; width: 50%; font-size: 16px; max-height: 200px; overflow-y: scroll; padding: 20px; background-color: rgba(0,0,0,0.5)"></div>
 </body>
+
+
+
+
 
 
 <!-- Vertex Shader
 –––––––––––––––––––––––––––––––––––––––––––––––––– -->
 
 <script type="x-shader/x-vertex" id="vertexShader">
-  uniform mat4 cameraProjection;
-  void main()
-  {
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(position.xyz, 1.0);
-  }
+	uniform mat4 cameraProjection;
+	void main()
+	{
+			gl_Position = projectionMatrix * modelViewMatrix * vec4(position.xyz, 1.0);
+	}
 </script>
+
+
 
 <!-- Library Scripts
 –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+
 <script src="js/lib/three.min.js"></script>
 <script src="js/lib/dat.gui.min.js"></script>
 <script src="js/lib/math.min.js"></script>
 
+
+
 <!-- Scripts
 -------------------------------------------------- -->
+
 <script src="js/Honeycomb.js"></script>
 <script src="js/GeometryMath.js"></script>
 <script src="js/ModelHelper.js"></script>
 <script src="js/Simplex.js"></script>
-<script src="js/Events.js"></script>
 <script src="js/Controls.js"></script>
-<script src="vr/VRController.js"></script>
 <script src="vr/VREffect.js"></script>
 <script src="js/UI.js"></script>
 <script src="js/HyperSpace.js" id="mainCode"></script>

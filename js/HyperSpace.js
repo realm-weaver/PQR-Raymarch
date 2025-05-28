@@ -15,6 +15,12 @@ var g_screenShotResolution;
 var g_controllerBoosts = [];
 var g_controllerDualPoints = [];
 
+
+
+var g_resolutionMultiplier = 2.0;
+
+
+
 //-------------------------------------------------------
 // Scene Variables
 //-------------------------------------------------------
@@ -36,6 +42,8 @@ var m_stepDamping = 0.75;
 var m_stepAccum = 0;
 var fpsLog = new Array(10);
 fpsLog.fill(g_targetFPS.value);
+
+
 
 
 
@@ -204,18 +212,21 @@ var initLights = function(g){
 	lightPositions = [];
 	lightIntensities = [];
 	
-	PointLightObject(g, new THREE.Vector3(10, 10, 10), new THREE.Vector4(1,1,1,0.1));
-	for(var i = 1; i<4; i++){ // We need to fill out our arrays with empty objects for glsl to be happy
-		PointLightObject(g, new THREE.Vector3(0,0,0), new THREE.Vector4(0,0,0,0));
-	}
-	/*
-	PointLightObject(g, new THREE.Vector3(0,0,1), new THREE.Vector4(0,0,1,2));
-	PointLightObject(g, new THREE.Vector3(1.2,0,0), new THREE.Vector4(1,0,0,2));
-	PointLightObject(g, new THREE.Vector3(0,1.1,0), new THREE.Vector4(0,1,0,2));
-	PointLightObject(g, new THREE.Vector3(-1.2,0,0), new THREE.Vector4(1,1,1,2));*/
+	var lightIntensity = 0.5;
+	var distanceFromOrigo = 4;
+
+	PointLightObject(g, new THREE.Vector3(+distanceFromOrigo, 0, 0), new THREE.Vector4(1, 0, 0, lightIntensity));
+	PointLightObject(g, new THREE.Vector3(0, +distanceFromOrigo, 0), new THREE.Vector4(0, 1, 0, lightIntensity));
+	PointLightObject(g, new THREE.Vector3(0, 0, +distanceFromOrigo), new THREE.Vector4(1, 1, 0, lightIntensity));
+
+	PointLightObject(g, new THREE.Vector3(-distanceFromOrigo, 0, 0), new THREE.Vector4(0, 1, 1, lightIntensity));
+	PointLightObject(g, new THREE.Vector3(0, -distanceFromOrigo, 0), new THREE.Vector4(1, 0, 1, lightIntensity));
+	PointLightObject(g, new THREE.Vector3(0, 0, -distanceFromOrigo), new THREE.Vector4(0, 0, 1, lightIntensity));
+
+	//PointLightObject(g, new THREE.Vector3(0, 0, 0), new THREE.Vector4(1, 1, 1, lightIntensity * 3));
 	
 	//Add light info for controllers
-	lightIntensities.push(new THREE.Vector4(1,0,0,0));
+	lightIntensities.push(new THREE.Vector4(1,1,1,1));
 }
 
 //-------------------------------------------------------
@@ -232,8 +243,7 @@ var initObjects = function(g){
 	invGlobalObjectBoosts = [];
 	globalObjectRadii = [];
 	globalObjectTypes = [];
-	
-	
+
 	for(var i = 0; i<4; i++){ // We need to fill out our arrays with empty objects for glsl to be happy
 		EmptyObject();
 	}
@@ -253,10 +263,11 @@ var init = function(){
 	textFPS = document.getElementById('fps');
 	DebugConsole = document.getElementById('debug-console');
 	scene = new THREE.Scene();
-	renderer = new THREE.WebGLRenderer();
-	document.body.appendChild(renderer.domElement);
-	
-	g_screenResolution = new THREE.Vector2(window.innerWidth, window.innerHeight);
+
+	renderer = new THREE.WebGLRenderer({canvas: document.getElementById("hyperbolic-canvas")});
+	//document.body.appendChild(renderer.domElement);
+
+	g_screenResolution = new THREE.Vector2(Math.floor(window.innerWidth * g_resolutionMultiplier), Math.floor(window.innerHeight * g_resolutionMultiplier));
 	//g_screenShotResolution = new THREE.Vector2(window.innerWidth, window.innerHeight);
 	g_screenShotResolution = new THREE.Vector2(2560, 1440);
 
@@ -461,6 +472,7 @@ var animate = function(){
 	g_controls.update();
 
 	g_effect.render(scene, camera, animate);
+	g_effect.setSize(window.innerWidth, window.innerHeight);
 }
 
 

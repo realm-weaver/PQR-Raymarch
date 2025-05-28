@@ -196,7 +196,7 @@ var initGui = function(){
 		toggleUI: true,
 		p:4,
 		q:3,
-		r:6,
+		r:4,
 		edgeThickness:1.0,
 		cutoutRadius:0.0,
 		eToHScale:5.0,
@@ -225,6 +225,9 @@ var initGui = function(){
 			img.src = renderer.domElement.toDataURL();
 			w.document.body.appendChild(img);
 			onResize();
+		},
+		setFullScreen: function(enabled){
+			
 		}
 	};
 
@@ -363,8 +366,8 @@ var initGui = function(){
 var onResize = function(){
 	g_effect.setSize(window.innerWidth, window.innerHeight);
 	if(g_material != null){
-		g_material.uniforms.screenResolution.value.x = window.innerWidth;
-		g_material.uniforms.screenResolution.value.y = window.innerHeight;
+		g_material.uniforms.screenResolution.value.x = Math.floor(window.innerWidth * g_resolutionMultiplier);
+		g_material.uniforms.screenResolution.value.y = Math.floor(window.innerHeight * g_resolutionMultiplier);
 	}
 }
 window.addEventListener('resize', onResize, false);

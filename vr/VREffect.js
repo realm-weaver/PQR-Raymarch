@@ -117,14 +117,13 @@ THREE.VREffect = function ( renderer, done ) {
 		requestAnimationFrame(animate);
 		if (iconHidden) {
 			iconHidden = false;
-			document.getElementById("vr-icon").style.display = "block";
 		}
 
 		renderer.render.apply( this._renderer, [scene, camera]  );
 	};
 
 	this.setSize = function( width, height ) {
-		renderer.setSize( width, height );
+		renderer.setSize( width * g_resolutionMultiplier, height * g_resolutionMultiplier );
 	};
 
 	var _vrMode = false;

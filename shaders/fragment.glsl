@@ -1,6 +1,10 @@
 //GLOBAL OBJECTS SCENE ++++++++++++++++++++++++++++++++++++++++++++++++
 float globalSceneSDF(vec4 samplePoint, mat4 globalTransMatrix, bool collideWithLights){
+
+  return maxDist;
+
   float distance = maxDist;
+  
   if(collideWithLights){
     //Light Objects
     for(int i=0; i<4; i++){
@@ -53,6 +57,7 @@ float globalSceneSDF(vec4 samplePoint, mat4 globalTransMatrix, bool collideWithL
 vec4 estimateNormal(vec4 p) { // normal vector is in tangent hyperplane to hyperboloid at p
     // float denom = sqrt(1.0 + p.x*p.x + p.y*p.y + p.z*p.z);  // first, find basis for that tangent hyperplane
     float newEp = EPSILON * 10.0;
+    bool cwl = false;
     vec4 basis_x = geometryNormalize(vec4(p.w,0.0,0.0,p.x), true);  // dw/dx = x/w on hyperboloid
     vec4 basis_y = vec4(0.0,p.w,0.0,p.y);  // dw/dy = y/denom
     vec4 basis_z = vec4(0.0,0.0,p.w,p.z);  // dw/dz = z/denom  /// note that these are not orthonormal!
@@ -60,9 +65,9 @@ vec4 estimateNormal(vec4 p) { // normal vector is in tangent hyperplane to hyper
     basis_z = geometryNormalize(basis_z - geometryDot(basis_z, basis_x)*basis_x - geometryDot(basis_z, basis_y)*basis_y, true);
     if(hitWhich == 1 || hitWhich == 2){ //global light scene
       return geometryNormalize( //p+EPSILON*basis_x should be lorentz normalized however it is close enough to be good enough
-          basis_x * (globalSceneSDF(p + newEp*basis_x, invCellBoost, true) - globalSceneSDF(p - newEp*basis_x, invCellBoost, true)) +
-          basis_y * (globalSceneSDF(p + newEp*basis_y, invCellBoost, true) - globalSceneSDF(p - newEp*basis_y, invCellBoost, true)) +
-          basis_z * (globalSceneSDF(p + newEp*basis_z, invCellBoost, true) - globalSceneSDF(p - newEp*basis_z, invCellBoost, true)),
+          basis_x * (globalSceneSDF(p + newEp*basis_x, invCellBoost, cwl) - globalSceneSDF(p - newEp*basis_x, invCellBoost, cwl)) +
+          basis_y * (globalSceneSDF(p + newEp*basis_y, invCellBoost, cwl) - globalSceneSDF(p - newEp*basis_y, invCellBoost, cwl)) +
+          basis_z * (globalSceneSDF(p + newEp*basis_z, invCellBoost, cwl) - globalSceneSDF(p - newEp*basis_z, invCellBoost, cwl)),
           true
       );
     }
