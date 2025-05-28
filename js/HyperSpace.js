@@ -299,9 +299,12 @@ var loadShaders = function(){ //Since our shader is made up of strings we can co
 					loader.load('shaders/shapes/edgeTubes.glsl', function(tubes){
 						loader.load('shaders/shapes/medialSurfaces.glsl', function(medial){
 							loader.load('shaders/shapes/cubeSides.glsl', function(cubes){
-								scenesFrag.push(tubes);
-								scenesFrag.push(medial);
-								scenesFrag.push(cubes);
+								loader.load('shaders/shapes/TEST_SimplexCuts.glsl', function(testSimplex){
+									scenesFrag.push(tubes);
+									scenesFrag.push(medial);
+									scenesFrag.push(cubes);
+									scenesFrag.push(testSimplex);
+								});
 							});
 						});
 					});
@@ -352,6 +355,7 @@ var finishInit = function(fShader){
 			cut1:{type:"i", value:g_cut1},
 			cut4:{type:"i", value:g_cut4},
 			tubeRad:{type:"f", value:g_tubeRad},
+			cutoutRad:{type:"f", value:g_cutoutRad},
 			cellPosition:{type:"v4", value:g_cellPosition},
 			cellSurfaceOffset:{type:"f", value:g_cellSurfaceOffset},
 			vertexPosition:{type:"v4", value:g_vertexPosition},
@@ -406,6 +410,7 @@ var finishInit = function(fShader){
 	LOG_MESSAGE("cut1: " + g_cut1);
 	LOG_MESSAGE("cut4: " + g_cut4);
 	LOG_MESSAGE("tubeRad: " + g_tubeRad);
+	LOG_MESSAGE("cutoutRad: " + g_cutoutRad);
 	LOG_MESSAGE("cellPosition: " + TO_STRING__Vector4(g_cellPosition));
 	LOG_MESSAGE("cellSurfaceOffset: " + g_cellSurfaceOffset);
 	LOG_MESSAGE("vertexPosition: " + TO_STRING__Vector4(g_vertexPosition));
@@ -456,13 +461,8 @@ var animate = function(){
 	g_effect.render(scene, camera, animate);
 }
 
-//-------------------------------------------------------
-// Where the magic happens
-//-------------------------------------------------------
-if(mobileCheck()){
-	window.location.replace("http://www.michaelwoodard.net/hypVR-Ray_m/")
-}
-else{
-	init();
-}
+
+
+
+init();
 

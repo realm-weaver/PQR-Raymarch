@@ -4,6 +4,7 @@
 var g_cut1 = 1;
 var g_cut4 = 2;
 var g_tubeRad = 0.15;
+var g_cutoutRad = 1.0;
 var g_cellPosition = new THREE.Vector4(0, 0, 0, 1);
 var g_cellSurfaceOffset = 0.996216;
 var g_vertexPosition = idealCubeCornerKlein;
@@ -149,17 +150,9 @@ function updateUniformsFromUI()
 		break;
 	}
 	
-	if( isCubical ) {
-		g_targetFPS.value = 27.5;
-		maxSteps = 31;
-	}
-	else {
+	if(!isCubical) {
 		g_vertexSurfaceOffset = 0;
 		g_cut4 = -1;
-
-		// Simplex drawing is more expensive, so let's live with a lower frame rate.
-		g_targetFPS.value = 17.0;
-		maxSteps = 55;
 	}
 
 	// Higher than this value for hyperbolic we run into floating point errors
@@ -168,6 +161,13 @@ function updateUniformsFromUI()
 		maxDist = 50.0; // Needs to be larger for euclidean.
 	if( g_geometry == Geometry.Spherical )
 		maxDist = Math.PI; // Only go to antipode.
+
+
+
+	g_cutoutRad = Math.pow(2.0, guiInfo.cutoutRadius);
+	maxSteps = Math.floor(Math.pow(2.0, guiInfo.maxStepsPower));
+
+
 
 	initGenerators(p,q,r);
 	initLights(g_geometry);
@@ -185,11 +185,13 @@ function updateUniformsFromUI()
 	g_material.uniforms.cut1.value = g_cut1;
 	g_material.uniforms.cut4.value = g_cut4;
 	g_material.uniforms.tubeRad.value = g_tubeRad;
+	g_material.uniforms.cutoutRad.value = g_cutoutRad;
 	g_material.uniforms.cellPosition.value = g_cellPosition;
 	g_material.uniforms.cellSurfaceOffset.value = g_cellSurfaceOffset;
 	g_material.uniforms.vertexPosition.value = g_vertexPosition;
 	g_material.uniforms.vertexSurfaceOffset.value = g_vertexSurfaceOffset;
 	g_material.uniforms.attnModel.value = guiInfo.falloffModel;
+	g_material.uniforms.maxSteps.value = maxSteps;
 	g_material.uniforms.maxDist.value = maxDist;
 
 	g_material.uniforms.useSimplex.value = !isCubical;
@@ -206,12 +208,13 @@ var initGui = function(){
 		q:3,
 		r:6,
 		edgeThickness:1.0,
+		cutoutRadius:0.0,
 		eToHScale:5.0,
 		fov:90,
 		toggleStereo:false,
 		rotateEyes:false,
 		autoSteps:true,
-		maxSteps: 256,
+		maxStepsPower: 6.0,
 		halfIpDistance: 0.03200000151991844,
 		falloffModel: 1,
 		renderShadows: 0,
@@ -225,18 +228,28 @@ var initGui = function(){
 			g_controllerBoosts[0].identity();
 		},
 		TakeSS: function(){
-			takeScreenshot();
+			var w = window.open('', '');
+			w.document.title = "Screenshot";
+			var img = new Image();
+			g_material.uniforms.screenResolution.value.x = g_screenShotResolution.x;
+			g_material.uniforms.screenResolution.value.y = g_screenShotResolution.y;
+			g_effect.setSize(g_screenShotResolution.x, g_screenShotResolution.y);
+			g_effect.render(scene, camera, animate);
+			img.src = renderer.domElement.toDataURL();
+			w.document.body.appendChild(img);
+			onResize();
 		}
 	};
 
 	var gui = new dat.GUI();
 	gui.close();
 	//scene settings ---------------------------------
-	var sceneController = gui.add(guiInfo, 'sceneIndex',{Simplex_cuts: 0, Edge_tubes: 1, Medial_surface: 2, Cube_planes: 3}).name("Scene");
+	var sceneController = gui.add(guiInfo, 'sceneIndex',{Simplex_cuts: 0, Edge_tubes: 1, Medial_surface: 2, Cube_planes: 3, TEST_Simplex_Cuts: 4}).name("Scene");
 	var pController = gui.add(guiInfo, 'p', {"3":3, "4":4, "5":5, "6":6, "7":7, "8":8, "9":9, "10":10, "11":11, "12":12, "16":16, "32":32, "64":64, "128":128}).name("P");
 	var qController = gui.add(guiInfo, 'q', {"3":3, "4":4, "5":5, "6":6, "7":7, "8":8, "9":9, "10":10, "11":11, "12":12, "16":16, "32":32, "64":64, "128":128}).name("Q");
 	var rController = gui.add(guiInfo, 'r', {"3":3, "4":4, "5":5, "6":6, "7":7, "8":8, "9":9, "10":10, "11":11, "12":12, "16":16, "32":32, "64":64, "128":128}).name("R");
 	var thicknessController = gui.add(guiInfo, 'edgeThickness', 0, 5).name("Edge Thickness");
+	var cutoutController = gui.add(guiInfo, 'cutoutRadius', -1.0, 1.0).name("Cutout Radius");
 	var scaleController = gui.add(guiInfo, 'eToHScale', 0.1,10).name("Euclid To Hyp");
 	var fovController = gui.add(guiInfo, 'fov',0,180).name("FOV");
 	var lightFalloffController = gui.add(guiInfo, 'falloffModel', {InverseLinear: 1, InverseSquare:2, InverseCube:3, Physical: 4, None:5}).name("Light Falloff");
@@ -253,7 +266,7 @@ var initGui = function(){
 	var stereoFolder = debugFolder.addFolder('Stereo');
 	var debugUIController = debugFolder.add(guiInfo, 'toggleUI').name("Toggle Debug UI");
 	debugFolder.add(guiInfo, 'autoSteps').name("Auto Adjust Step Count");
-	debugFolder.add(guiInfo, 'maxSteps', 0, 512).name("Set Step Count");
+	var maxstepsController = debugFolder.add(guiInfo, 'maxStepsPower', 2, 10).name("Max Steps Power");
 	debugFolder.add(g_targetFPS, 'value', 15, 90).name("Target FPS");
 	var switchToStereo = stereoFolder.add(guiInfo, 'toggleStereo').name("Toggle Stereo");
 	var rotateController = stereoFolder.add(guiInfo, 'rotateEyes').name("Rotate Eyes");
@@ -318,12 +331,20 @@ var initGui = function(){
 		updateUniformsFromUI();
 	});
 
+	cutoutController.onChange(function(value) {
+		updateUniformsFromUI();
+	});
+
 	scaleController.onFinishChange(function(value) {
 		updateEyes();
 	});
 
 	fovController.onChange(function(value){
 		g_material.uniforms.fov.value = value;
+	});
+
+	maxstepsController.onChange(function(value) {
+		updateUniformsFromUI();
 	});
 
 	debugUIController.onFinishChange(function(value){

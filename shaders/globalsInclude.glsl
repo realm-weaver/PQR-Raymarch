@@ -55,6 +55,7 @@ uniform vec3 globalObjectRadii[4];
 uniform vec4 halfCubeDualPoints[3];
 uniform float halfCubeWidthKlein;
 uniform float tubeRad;
+uniform float cutoutRad;
 uniform vec4 cellPosition;
 uniform float cellSurfaceOffset;
 uniform vec4 vertexPosition;

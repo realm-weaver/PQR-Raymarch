@@ -25,6 +25,7 @@ Original Project: https://github.com/mtwoodard/hypVR-Ray
   * R/F: move view on vertical axys
 * Utility:
   * Tab: enter fullscreen mode (only works once per reload)
+  * Backspace: reset position
 
 
 
@@ -40,8 +41,9 @@ Original Project: https://github.com/mtwoodard/hypVR-Ray
 
 
 ### Planned Changes
-* 01 - Remove VR Functionality
+* 01 - Remove VR & Mobile Functionality
   * 01.A - Remove all VR-related Controls and Events
+  * 02.B - Remove all mobile-related code
 
 ### Executed Changes
 * 00 - Initial Changes
