@@ -23,8 +23,8 @@ Original Project: https://github.com/mtwoodard/hypVR-Ray
   * Up/Down Arrows: move view on depth axys
   * Left/Right Arrows: move view on horizontal axys
   * R/F: move view on vertical axys
-Utilit:
-  * Home: enter fullscreen mode (only works once per reload)
+* Utility:
+  * Tab: enter fullscreen mode (only works once per reload)
 
 
 
