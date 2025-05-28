@@ -357,3 +357,14 @@ var initGui = function(){
 		g_material.fragmentShader = globalsFrag.concat(lightingFrag).concat(geoFrag).concat(scenesFrag[index]).concat(mainFrag);
 	});
 }
+
+
+
+var onResize = function(){
+	g_effect.setSize(window.innerWidth, window.innerHeight);
+	if(g_material != null){
+		g_material.uniforms.screenResolution.value.x = window.innerWidth;
+		g_material.uniforms.screenResolution.value.y = window.innerHeight;
+	}
+}
+window.addEventListener('resize', onResize, false);
