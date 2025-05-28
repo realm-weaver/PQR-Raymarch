@@ -1,36 +1,58 @@
-# hypVR-Ray
-Hyperbolic VR using Raymarching.
+# PQR Raymarch
 
 ![alt text](https://raw.githubusercontent.com/mtwoodard/hypVR-Ray/master/images/437_screenshot.PNG)
 
-Based on the websperience  by Vi Hart, Andrea Hawksley, Sabetta Matsumoto and Henry Segerman featured over at https://github.com/hawksley/hypVR. This project seeks to improve upon the original by using raymarching as a technique to improve the visible depth of the environment. HypVR-Ray is being worked by Michael Woodard, Henry Segerman, and Roice Nelson and is helped by the work of Jeff Week's Curved Spaces, Mozilla's webVR framework for THREEjs, and Jamie Wong's Ray Marching and Signed Distance Functions.
+Original Project: https://github.com/mtwoodard/hypVR-Ray
 
-This material is based upon work supported by the National Science Foundation under Grant No. DMS-1708239. Any opinions, findings, and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the National Science Foundation.
+## How to start?
 
-Check out this project at www.michaelwoodard.net/hypVR-Ray/ 
-
-# Links
-* http://michaelwoodard.net
-* http://segerman.org/
-* http://vihart.com
-* http://andreahawksley.com
-* http://www.geometrygames.org/CurvedSpaces/
-* https://github.com/MozVR/vr-web-examples/tree/master/threejs-vr-boilerplate
-* http://jamie-wong.com/2016/07/15/ray-marching-signed-distance-functions/
+* On Windows, must have Python3 installed, open the project folder in CMD and run command:
+* Run Command: python -m http.server <PORT>
+* Open in browser: localhost:8000 <PORT>
+* _Default port is 8000_
 
 
-# Running Locally
-Running this locally requires a simple web server (to source the shader files at runtime), with the root at the same level as index.html. This can be done in python 3 by running the command "python -m http.server". On Windows, you can set up a server in the Control Panel Administrative Tools, in the IIS Manager (you may need to turn this feature on first). NOTE: The server will need to have a MIME type configuration for .glsl files set to "text/plain".
 
-# Controls
-Use arrow keys to move and "wasd" to rotate the camera. "q" and "e" roll the camera. To enter VR mode first click on the VR icon, then press "v", "enter", or "space" to enable tracking.
+## Controls:
 
-# Related work
-* Vi Hart, Andrea Hawksley, Elisabetta A. Matsumoto, and Henry Segerman. Non-euclidean virtual reality I: explorations of H3. In Proc. Bridges 2017, pages 33-40. Tessellations Publishing, 2017.
-* Vi Hart, Andrea Hawksley, Elisabetta A. Matsumoto, and Henry Segerman. Non-euclidean virtual reality II: explorations of H2 × E. In Proc. Bridges 2017, pages 41-48. Tessellations Publishing, 2017.
-* Vi Hart, Andrea Hawksley, Henry Segerman, and Marc ten Bosch. Hypernom: Mapping VR headset orientation to S3. In Proc. Bridges 2015, pages 387–390. Tessellations Publishing, 2015.
-* Jeff Weeks. Curved Spaces. a flight simulator for multiconnected universes, available from http://www.geometrygames.org/CurvedSpaces/.
-* Jeff Weeks. Real-time rendering in curved spaces. IEEE Computer Graphics and Applications, 22(6):90–99, 2002.
-* Charles Gunn, Discrete groups and visualization of three-dimensional manifolds, Proceedings of the 20th annual conference on computer graphics and interactive techniques, 1993, pp. 255–262.
-* Charles Gunn, Advances in metric-neutral visualization, Proceedings of gravisma 2010, 2010, pp. 17–26.
-* The Geometry Center, Not Knot, http://www.geom.uiuc.edu/video/NotKnot/
+* Rotation:
+  * W/S: rotate view around horizontal axys
+  * A/D: rotate view around vertical axys
+  * Q/E: rotate view around depth axys
+* Movement (relative to orientation):
+  * Up/Down Arrows: move view on depth axys
+  * Left/Right Arrows: move view on horizontal axys
+  * R/F: move view on vertical axys
+Utilit:
+  * Home: enter fullscreen mode (only works once per reload)
+
+
+
+## Goals
+* Understanding {P, Q, R} spaces and their math + understanding JS+GLSL based web project design
+* Cleaning the code to its bare minimum + organising & commenting it for my own understanding ( removing VR, hardcoding lightsource(s), etc.)
+* Improving on visual and movement limitations
+* Adding other "Scene" shapes that help in visual understanding (maybe removing old ones that do not)
+* FINALLY: Porting JS to C# + Unity & GLSL to ShaderLab + HLSL
+
+
+## CHANGES
+
+
+### Planned Changes
+* 01 - Remove VR Functionality
+  * 01.A - Remove all VR-related Controls and Events
+
+### Executed Changes
+* 00 - Initial Changes
+  * 00.A - Added a DEBUG widget to log messages visually.
+  * 00.B - Increase "maxSteps" to 512. Modern GPUs should handle that easily.
+  * 00.C - Added 16, 32, 64 & 128 to both P, Q and R as options (removed 30).
+  * 00.D - Changed some bounds and default values on the UI (speed, thickness, etc.)
+
+### Failed Ideas
+
+
+***
+
+
