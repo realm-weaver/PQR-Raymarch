@@ -265,7 +265,7 @@ THREE.VRController.prototype.update = function(){
 	if(this.lastQuat === new THREE.Quaternion()) this.lastQuat.copy(this.quaternion);
 
 	//Grab hmd info
-	var vrState = g_controls.getVRState();
+	var vrState = null;
 
 	//Update our boost with delta translation
 	//var deltaPosition = new THREE.Vector3().subVectors(this.position, this.lastPos);

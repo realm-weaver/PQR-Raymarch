@@ -77,29 +77,26 @@ window.addEventListener('resize', onResize, false);
 // Listens for double click to enter fullscreen VR mode
 //--------------------------------------------------------------------
 document.body.addEventListener('click', function(event){
-		if(event.target.id === "vr-icon"){
-				event.target.style.display = "none";
-				if (navigator.getVRDisplays) navigator.getVRDisplays().then( g_effect.gotVRDisplay );
+	if(event.target.id === "vr-icon"){
+		event.target.style.display = "none";
+		if (navigator.getVRDisplays) navigator.getVRDisplays().then( g_effect.gotVRDisplay );
 		else if ( navigator.getVRDevices ) navigator.getVRDevices().then( g_effect.gotVRDevices );
 		else navigator.mozGetVRDevices( g_effect.gotVRDevices );
-
-		}
+	}
 });
 
 //--------------------------------------------------------------------
 // Handle keyboard events
 //--------------------------------------------------------------------
 function onkey(event){
-		event.preventDefault();
+	event.preventDefault();
 
-		if(event.keyCode == 90) // z
-				g_controls.zeroSensor();
-		else if(event.keyCode == 8) // Space
-				guiInfo.resetPosition();
-		else if(event.keyCode == 9) // Tab
-				g_effect.setFullScreen(true);
-		else if(event.keyCode == 86 || event.keyCode == 13 || event.keyCode == 32)
-				g_effect.toggleVRMode();
+	if(event.keyCode == 8) // Space
+		guiInfo.resetPosition();
+	else if(event.keyCode == 9) // Tab
+		g_effect.setFullScreen(true);
+	else if(event.keyCode == 86 || event.keyCode == 13 || event.keyCode == 32)
+		g_effect.toggleVRMode();
 }
 
 window.addEventListener("keydown", onkey, false);
@@ -108,16 +105,14 @@ window.addEventListener("keydown", onkey, false);
 // Listen for keys for movement/rotation
 //--------------------------------------------------------------------
 function key(event, sign){
-		var control = g_controls.manualControls[event.keyCode];
-		if(control == undefined || sign === 1 && control.active || sign == -1 && !control.active) return;
+	var control = g_controls.manualControls[event.keyCode];
+	if(control == undefined || sign === 1 && control.active || sign == -1 && !control.active) return;
 
-		control.active = (sign === 1);
-		if (control.index <= 2)
-				g_controls.manualRotateRate[control.index] += sign * control.sign;
-		else if (control.index <= 5)
-				g_controls.manualMoveRate[control.index - 3] += sign * control.sign;
-
-		
+	control.active = (sign === 1);
+	if (control.index <= 2)
+		g_controls.manualRotateRate[control.index] += sign * control.sign;
+	else if (control.index <= 5)
+		g_controls.manualMoveRate[control.index - 3] += sign * control.sign;
 }
 
 document.addEventListener('keydown', function(event){key(event, 1);}, false);
