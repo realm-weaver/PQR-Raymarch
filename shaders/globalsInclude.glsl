@@ -79,10 +79,30 @@ vec3 qtransform( vec4 q, vec3 v ){
   return v + 2.0*cross(cross(v, -q.xyz ) + q.w*v, -q.xyz);
 }
 
+
+
+
+
 //Raymarch Functions
-float unionSDF(float d1, float d2){
-  return min(d1, d2);
+float unionSDF(float a, float b){
+  return min(a, b);
 }
+
+float intersectSDF(float a, float b){
+  return max(a, b);
+}
+
+float differenceSDF(float a, float b){
+  return max(a, -b);
+}
+
+float symdiffSDF(float a, float b){
+    return max(min(a, b), -max(a, b));
+}
+
+
+
+
 
 //--------------------------------------------------------------------
 // Hyperbolic Functions
