@@ -9,7 +9,7 @@
 //--------------------------------------------
 //Global Constants
 //--------------------------------------------
-const int MAX_MARCHING_STEPS = 127;
+const int MAX_MARCHING_STEPS = 512;
 const float MIN_DIST = 0.0;
 const float EPSILON = 0.0001;
 const vec4 ORIGIN = vec4(0,0,0,1);

@@ -23,9 +23,9 @@ THREE.Controls = function(done){
         38 : {index: 3, sign: 1, active: 0},  // up
         40 : {index: 3, sign: -1, active: 0}, // down
         37 : {index: 4, sign: -1, active: 0}, // left
-        39 : {index: 4, sign: 1, active: 0},   // right
-        222 : {index: 5, sign: 1, active: 0}, // single quote
-        191 : {index: 5, sign: -1, active: 0},   // fwd slash
+        39 : {index: 4, sign: 1, active: 0},  // right
+        82 : {index: 5, sign: 1, active: 0},  // r
+        70 : {index: 5, sign: -1, active: 0}, // f
     };
     
     this._init = function(){
