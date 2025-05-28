@@ -285,8 +285,8 @@ var loadShaders = function(){ //Since our shader is made up of strings we can co
 	var loader = new THREE.FileLoader();
 	loader.setResponseType('text');
 	loader.load('shaders/fragment.glsl',function(main){
-		loader.load('shaders/simplexCuts.glsl', function(scene){
-			loader.load('shaders/hyperbolic.glsl', function(hyperbolic){
+		loader.load('shaders/shapes/simplexCuts.glsl', function(scene){
+			loader.load('shaders/geometries/hyperbolic.glsl', function(hyperbolic){
 				loader.load('shaders/lighting.glsl', function(lighting){
 					loader.load('shaders/globalsInclude.glsl', function(globals){
 					//pass full shader string to finish our init
@@ -296,17 +296,17 @@ var loadShaders = function(){ //Since our shader is made up of strings we can co
 					scenesFrag.push(scene);
 					mainFrag = main;
 					finishInit(globals.concat(lighting).concat(hyperbolic).concat(scene).concat(main));
-					loader.load('shaders/edgeTubes.glsl', function(tubes){
-						loader.load('shaders/medialSurfaces.glsl', function(medial){
-							loader.load('shaders/cubeSides.glsl', function(cubes){
+					loader.load('shaders/shapes/edgeTubes.glsl', function(tubes){
+						loader.load('shaders/shapes/medialSurfaces.glsl', function(medial){
+							loader.load('shaders/shapes/cubeSides.glsl', function(cubes){
 								scenesFrag.push(tubes);
 								scenesFrag.push(medial);
 								scenesFrag.push(cubes);
 							});
 						});
 					});
-					loader.load('shaders/euclidean.glsl', function(euclidean){
-						loader.load('shaders/spherical.glsl', function(spherical){
+					loader.load('shaders/geometries/euclidean.glsl', function(euclidean){
+						loader.load('shaders/geometries/spherical.glsl', function(spherical){
 							geometryFrag.push(euclidean);
 							geometryFrag.push(spherical);
 						});
