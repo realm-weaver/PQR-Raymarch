@@ -1,15 +1,15 @@
 # PQR Raymarch
 
-![alt text](https://raw.githubusercontent.com/mtwoodard/hypVR-Ray/master/images/437_screenshot.PNG)
+![alt text](https://raw.githubusercontent.com/realm-weaver/PQR-Raymarch/master/images/main-image.webp)
 
 Original Project: https://github.com/mtwoodard/hypVR-Ray
 
 ## How to start?
 
 * On Windows, must have Python3 installed, open the project folder in CMD and run command:
-* Run Command: python -m http.server <PORT>
-* Open in browser: localhost:8000 <PORT>
-* _Default port is 8000_
+* Run Command: python -m http.server PORT
+* Open in browser: localhost: PORT
+* _Default PORT is 8000_
 
 
 
