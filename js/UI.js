@@ -22,10 +22,30 @@ function getGeometryFrag()
 	geometryFragIdx = 0;
 	if( g_geometry == Geometry.Euclidean )
 		geometryFragIdx = 1;
-	if( g_geometry == Geometry.Spherical )
+	else if( g_geometry == Geometry.Spherical )
 		geometryFragIdx = 2;
 	return geometryFrag[geometryFragIdx];
 }
+
+
+function getSceneName(sceneIndex){
+	if( sceneIndex == 0 )
+		return "SimplexCuts";
+	else if( sceneIndex == 1 )
+		return "EdgeTubes";
+	else if( sceneIndex == 2 )
+		return "MedialSurfaces";
+	else if( sceneIndex == 3 )
+		return "CubeSides";
+	else
+		return "";
+
+}
+
+
+
+
+
 
 // Inputs are from the UI parameterizations.
 // gI is the guiInfo object from initGui
@@ -269,7 +289,8 @@ var initGui = function(){
 		    const link = document.createElement('a');
 
 		    // Execute download
-		    link.download = `${timestamp}.png`;
+		    var scn = getSceneName(this.sceneIndex);
+		    link.download = timestamp + " - {" + this.p + "," + this.r + "," + this.q + "}" + (scn == "" ? "" : " --" + scn) + ".png";
 		    link.href = dataURL;
 		    link.click();
 		},
@@ -315,6 +336,7 @@ var initGui = function(){
 	var shadowController = gui.add(guiInfo, 'renderShadows', {NoShadows: 0, Local: 1, Global: 2, LocalAndGlobal: 3}).name("Shadows");
 	var softnessController = gui.add(guiInfo, 'shadowSoftness', 0,0.25).name("Shadow Softness");
 	gui.add(guiInfo, 'resetPosition').name("Reset Position");
+
 	//debug settings ---------------------------------
 	var debugFolder = gui.addFolder('Debug');
 	var debugUIController = debugFolder.add(guiInfo, 'toggleUI').name("Toggle Debug UI");
@@ -458,6 +480,8 @@ var onKeyDown = function(event){
         g_controls.turnAround();
     if(event.keyCode == 67)				// C
         guiInfo.togglePointer();
+    if(event.keyCode == 88)				// X
+        console.log("X");
 }
 
 window.addEventListener("keydown", onKeyDown, false);
@@ -468,3 +492,4 @@ window.addEventListener("keydown", onKeyDown, false);
 document.addEventListener('pointerlockchange', () => {
     guiInfo.isPointerLocked = (document.pointerLockElement === renderer.domElement);
 });
+
