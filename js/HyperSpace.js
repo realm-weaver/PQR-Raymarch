@@ -1,17 +1,14 @@
 //-------------------------------------------------------
 // Global Variables
 //-------------------------------------------------------
-var g_effect;
 var g_material;
 var g_controls;
 var g_geometry;
 var g_rotation;
 var g_currentBoost;
-var g_stereoBoosts = [];
 var g_cellBoost;
 var g_invCellBoost;
 var g_screenResolution;
-var g_screenShotResolution;
 var g_controllerBoosts = [];
 var g_controllerDualPoints = [];
 
@@ -27,10 +24,8 @@ var g_resolutionMultiplier = 1.0;
 var scene;
 var renderer;
 var camera;
-//var maxSteps = 50;
-//var maxDist = 10.0;
-var maxSteps = 200;
-var maxDist = 100.0;
+var maxSteps = 200;			// originally = 50
+var maxDist = 100.0;		// originally = 100.0
 var textFPS;
 var DebugConsole;
 var time;
@@ -268,10 +263,7 @@ var init = function(){
 	//document.body.appendChild(renderer.domElement);
 
 	g_screenResolution = new THREE.Vector2(Math.floor(window.innerWidth * g_resolutionMultiplier), Math.floor(window.innerHeight * g_resolutionMultiplier));
-	//g_screenShotResolution = new THREE.Vector2(window.innerWidth, window.innerHeight);
-	g_screenShotResolution = new THREE.Vector2(2560, 1440);
 
-	g_effect = new THREE.VREffect(renderer);
 	camera = new THREE.OrthographicCamera(-1,1,1,-1,1/Math.pow(2,53),1);
 	g_controls = new THREE.Controls();
 	g_rotation = new THREE.Quaternion();
@@ -345,7 +337,6 @@ var finishInit = function(fShader){
 			fov:{type:"f", value:90},
 			invGenerators:{type:"m4v", value:invGens},
 			currentBoost:{type:"m4", value:g_currentBoost},
-			stereoBoosts:{type:"m4v", value:g_stereoBoosts},
 			cellBoost:{type:"m4", value:g_cellBoost},
 			invCellBoost:{type:"m4", value:g_invCellBoost},
 			maxSteps:{type:"i", value:maxSteps},
@@ -391,14 +382,12 @@ var finishInit = function(fShader){
 	
 	var tab = "&nbsp;&nbsp;&nbsp;&nbsp;";
 	
-	LOG_MESSAGE("iStereo: " + 0);
 	LOG_MESSAGE("geometry: " + 3);
 	LOG_MESSAGE("screenResolution: " + TO_STRING__Vector2(g_screenResolution));
 	LOG_MESSAGE("fov: " + 90);
 	LOG_MESSAGE("invGenerators: {<br/>" + TO_STRING__Matrix4(invGens[0], tab) + ",<br/>" + TO_STRING__Matrix4(invGens[1], tab) + ",<br/>" + TO_STRING__Matrix4(invGens[2], tab) + ",<br/>" + TO_STRING__Matrix4(invGens[3], tab) + ",<br/>" + TO_STRING__Matrix4(invGens[4], tab) + ",<br/>" + TO_STRING__Matrix4(invGens[5], tab) + "<br/>}");
 	
 	LOG_MESSAGE("currentBoost: " + TO_STRING__Matrix4(g_currentBoost));
-	LOG_MESSAGE("stereoBoosts: {<br/>" + TO_STRING__Matrix4(g_stereoBoosts[0], tab) + ",<br/>" + TO_STRING__Matrix4(g_stereoBoosts[1], tab) + "<br/>}");
 	LOG_MESSAGE("cellBoost: " + TO_STRING__Matrix4(g_cellBoost));
 	LOG_MESSAGE("invCellBoost: " + TO_STRING__Matrix4(g_invCellBoost));
 	
@@ -433,12 +422,12 @@ var finishInit = function(fShader){
 	LOG_MESSAGE("simplexMirrorsKlein: " + simplexMirrors);						//
 	LOG_MESSAGE("simplexDualPoints: " + simplexDualPoints);						//
 	
-	/*LOG_MESSAGE("iStereo: " + 0);
-	LOG_MESSAGE("iStereo: " + 0);
-	LOG_MESSAGE("iStereo: " + 0);*/
+	/*LOG_MESSAGE("????????: " + 0);
+	LOG_MESSAGE("("????????:: " + 0);
+	LOG_MESSAGE("("????????:: " + 0);*/
 
-	g_effect.setSize(g_screenResolution.x, g_screenResolution.y);
-	//Setup dat GUI --- SceneManipulator.js
+	onResize();
+
 	initGui();
 
 	//Setup a "quad" to render on-------------------------
@@ -470,11 +459,16 @@ var animate = function(){
 
 	g_controls.update();
 
-	g_effect.render(scene, camera, animate);
-	g_effect.setSize(window.innerWidth, window.innerHeight);
+	render(scene, camera, animate);
+	onResize();
 }
 
 
+
+var render = function(scene, camera, animate){
+	requestAnimationFrame(animate);
+	renderer.render.apply(renderer, [scene, camera]);
+}
 
 
 init();

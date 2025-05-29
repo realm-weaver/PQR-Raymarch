@@ -206,28 +206,97 @@ var initGui = function(){
 		falloffModel: 1,
 		renderShadows: 0,
 		shadowSoftness: 0,
-		screenshotWidth: g_screenShotResolution.x,
-		screenshotHeight: g_screenShotResolution.y,
+
+
+
+		isPointerLocked: false,
+		togglePointer: function() {
+			if(this.isPointerLocked) {
+			    if (document.exitPointerLock) {
+			        document.exitPointerLock();
+			    }
+			}
+			else {
+			    if (renderer.domElement.requestPointerLock) {
+			        renderer.domElement.requestPointerLock();
+			    }
+			}
+		},
+
+
 		resetPosition: function(){
 			g_currentBoost.identity();
 			g_cellBoost.identity();
 			g_invCellBoost.identity();
 			g_controllerBoosts[0].identity();
 		},
-		TakeSS: function(){
-			var w = window.open('', '');
-			w.document.title = "Screenshot";
-			var img = new Image();
-			g_material.uniforms.screenResolution.value.x = g_screenShotResolution.x;
-			g_material.uniforms.screenResolution.value.y = g_screenShotResolution.y;
-			g_effect.setSize(g_screenShotResolution.x, g_screenShotResolution.y);
-			g_effect.render(scene, camera, animate);
-			img.src = renderer.domElement.toDataURL();
-			w.document.body.appendChild(img);
-			onResize();
+		takeScreenshot: function(){
+		    // Set custom resolution
+		    var scaleFactor = 2;
+		    var targetWidth = 2560;
+		    var targetHeight = 1440;
+		    var superWidth = targetWidth * scaleFactor;
+		    var superHeight = targetHeight * scaleFactor;
+
+		    // Render at higher resolution
+			g_material.uniforms.screenResolution.value.x = superWidth;
+			g_material.uniforms.screenResolution.value.y = superHeight;
+		    renderer.setSize(superWidth, superHeight);
+		    renderer.render(scene, camera);
+
+		    // Read high-res image from WebGL canvas
+		    const highResCanvas = renderer.domElement;
+
+		    // Create a second canvas to downscale
+		    const downscaleCanvas = document.createElement('canvas');
+		    downscaleCanvas.width = targetWidth;
+		    downscaleCanvas.height = targetHeight;
+		    const ctx = downscaleCanvas.getContext('2d');
+
+		    // Draw the high-res image onto the smaller canvas
+		    ctx.drawImage(highResCanvas, 0, 0, superWidth, superHeight, 0, 0, targetWidth, targetHeight);
+
+		    // Convert to PNG and download
+		    const dataURL = downscaleCanvas.toDataURL('image/png');
+
+		    // Restore original size
+		    onResize();
+
+		    // Create download link
+		    const now = new Date();
+		    const timestamp = now.toISOString().replace(/[-T:.Z]/g, '').slice(0, 8) + '-' + 
+		                      now.toTimeString().slice(0, 8).replace(/:/g, '');
+		    const link = document.createElement('a');
+
+		    // Execute download
+		    link.download = `${timestamp}.png`;
+		    link.href = dataURL;
+		    link.click();
 		},
-		setFullScreen: function(enabled){
-			
+		toggleFullscreen: function() {
+			var canvas = renderer.domElement;
+
+		    if (!document.fullscreenElement) {
+		        if (canvas.requestFullscreen) {
+		            canvas.requestFullscreen();
+		        } else if (canvas.webkitRequestFullscreen) { // Safari
+		            canvas.webkitRequestFullscreen();
+		        } else if (canvas.mozRequestFullScreen) { // Firefox
+		            canvas.mozRequestFullScreen();
+		        } else if (canvas.msRequestFullscreen) { // IE/Edge
+		            canvas.msRequestFullscreen();
+		        }
+		    } else {
+		        if (document.exitFullscreen) {
+		            document.exitFullscreen();
+		        } else if (document.webkitExitFullscreen) {
+		            document.webkitExitFullscreen();
+		        } else if (document.mozCancelFullScreen) {
+		            document.mozCancelFullScreen();
+		        } else if (document.msExitFullscreen) {
+		            document.msExitFullscreen();
+		        }
+		    }
 		}
 	};
 
@@ -246,11 +315,6 @@ var initGui = function(){
 	var shadowController = gui.add(guiInfo, 'renderShadows', {NoShadows: 0, Local: 1, Global: 2, LocalAndGlobal: 3}).name("Shadows");
 	var softnessController = gui.add(guiInfo, 'shadowSoftness', 0,0.25).name("Shadow Softness");
 	gui.add(guiInfo, 'resetPosition').name("Reset Position");
-	//screenshot settings ---------------------------------
-	var screenshotFolder = gui.addFolder('Screenshot');
-	var widthController = screenshotFolder.add(guiInfo, 'screenshotWidth');
-	var heightController = screenshotFolder.add(guiInfo, 'screenshotHeight');
-	screenshotFolder.add(guiInfo, 'TakeSS').name("Take Screenshot");
 	//debug settings ---------------------------------
 	var debugFolder = gui.addFolder('Debug');
 	var debugUIController = debugFolder.add(guiInfo, 'toggleUI').name("Toggle Debug UI");
@@ -261,13 +325,6 @@ var initGui = function(){
 	// ------------------------------
 	// UI Controllers
 	// ------------------------------
-	widthController.onFinishChange(function(value){
-		g_screenShotResolution.x = value;
-	});
-
-	heightController.onFinishChange(function(value){
-		g_screenShotResolution.y = value;
-	})
 
 	lightFalloffController.onFinishChange(function(value){
 		updateUniformsFromUI();
@@ -343,50 +400,71 @@ var initGui = function(){
 
 	debugUIController.onFinishChange(function(value){
 		var crosshair = document.getElementById("crosshair");
-		var crosshairLeft = document.getElementById("crosshairLeft");
-		var crosshairRight = document.getElementById("crosshairRight");
 		var fps = document.getElementById("fps");
 		var about = document.getElementById("about");
-		if(value){
+		if(value) {
 			about.style.visibility = 'visible';
 			fps.style.visibility = 'visible';
-			if(guiInfo.toggleStereo){
-				crosshairLeft.style.visibility = 'visible';
-				crosshairRight.style.visibility = 'visible';
-			}
-			else
-				crosshair.style.visibility = 'visible';
+			crosshair.style.visibility = 'visible';
 		}
-		else{
+		else {
 			about.style.visibility = 'hidden';
 			fps.style.visibility = 'hidden';
 			crosshair.style.visibility = 'hidden';
-			crosshairLeft.style.visibility = 'hidden';
-			crosshairRight.style.visibility = 'hidden';
 		}
 	});
 
 	sceneController.onFinishChange(function(index){
 		updateShader();
 	});
-
-
-
 }
 
+
+
+
+
 var updateShader = function(){
-	var geoFrag = getGeometryFrag();
-	var scnFrag = scenesFrag[guiInfo.sceneIndex];
+	const geoFrag = getGeometryFrag();
+	const scnFrag = scenesFrag[guiInfo.sceneIndex];
 	g_material.needsUpdate = true;
 	g_material.fragmentShader = globalsFrag.concat(lightingFrag).concat(geoFrag).concat(scnFrag).concat(mainFrag);
 }
 
 
 var onResize = function(){
-	g_effect.setSize(window.innerWidth, window.innerHeight);
+	const width = Math.floor(window.innerWidth * g_resolutionMultiplier);
+	const height = Math.floor(window.innerHeight * g_resolutionMultiplier);
+	renderer.setSize(width, height);
 	if(g_material != null){
-		g_material.uniforms.screenResolution.value.x = Math.floor(window.innerWidth * g_resolutionMultiplier);
-		g_material.uniforms.screenResolution.value.y = Math.floor(window.innerHeight * g_resolutionMultiplier);
+		g_material.uniforms.screenResolution.value.x = width;
+		g_material.uniforms.screenResolution.value.y = height;
 	}
 }
 window.addEventListener('resize', onResize, false);
+
+
+
+
+var onKeyDown = function(event){
+    event.preventDefault();
+
+    if(event.keyCode == 8)				// Backspace
+        guiInfo.resetPosition();
+    else if(event.keyCode == 9)			// Tab
+        guiInfo.toggleFullscreen();
+    else if(event.keyCode == 13)		// Enter
+        guiInfo.takeScreenshot();
+    if(event.keyCode == 32)				// Space
+        g_controls.turnAround();
+    if(event.keyCode == 67)				// C
+        guiInfo.togglePointer();
+}
+
+window.addEventListener("keydown", onKeyDown, false);
+
+
+
+
+document.addEventListener('pointerlockchange', () => {
+    guiInfo.isPointerLocked = (document.pointerLockElement === renderer.domElement);
+});

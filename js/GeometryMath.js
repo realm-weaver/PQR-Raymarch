@@ -313,11 +313,11 @@ var EmptyObject = function(){
   globalObjectTypes.push(-1);
 }
 
-var SphereObject = function(g, pos, radii){
+var SphereObject = function(g, pos, radius){
   var objMat = new THREE.Matrix4().multiply(translateByVector(g, pos));
   globalObjectBoosts.push(objMat);
   invGlobalObjectBoosts.push(new THREE.Matrix4().getInverse(objMat));
-  globalObjectRadii.push(new THREE.Vector3(radii, radii, radii));
+  globalObjectRadii.push(new THREE.Vector3(radius, radius, radius));
   globalObjectTypes.push(0);
 }
 

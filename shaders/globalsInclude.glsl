@@ -29,7 +29,6 @@ uniform vec2 screenResolution;
 uniform float fov;
 uniform mat4 invGenerators[6];
 uniform mat4 currentBoost;
-uniform mat4 stereoBoosts[2];
 uniform mat4 cellBoost; 
 uniform mat4 invCellBoost;
 uniform int maxSteps;
