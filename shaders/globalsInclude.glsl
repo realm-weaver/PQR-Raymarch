@@ -24,8 +24,7 @@ int hitWhich = 0;
 //-------------------------------------------
 //Translation & Utility Variables
 //--------------------------------------------
-uniform int isStereo;
-//uniform int geometry;
+uniform int geometry;
 uniform vec2 screenResolution;
 uniform float fov;
 uniform mat4 invGenerators[6];

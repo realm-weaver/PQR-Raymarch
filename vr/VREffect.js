@@ -58,7 +58,6 @@ THREE.VREffect = function ( renderer, done ) {
         			document.getElementById("crosshair").style.visibility = 'hidden';
 					guiInfo.toggleStereo = true;
 					self.getEyeRotation(self.leftEyeTranslation.x);
-					g_material.uniforms.isStereo.value = 1;
 					break; // We keep the first we encounter
 				}
 			}

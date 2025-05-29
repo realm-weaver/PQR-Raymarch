@@ -17,7 +17,7 @@ var g_controllerDualPoints = [];
 
 
 
-var g_resolutionMultiplier = 2.0;
+var g_resolutionMultiplier = 1.0;
 
 
 
@@ -340,7 +340,6 @@ var finishInit = function(fShader){
 //	console.log(fShader);
 	g_material = new THREE.ShaderMaterial({
 		uniforms:{
-			isStereo:{type: "i", value: 0},
 			geometry:{type: "i", value: 3},
 			screenResolution:{type:"v2", value:g_screenResolution},
 			fov:{type:"f", value:90},

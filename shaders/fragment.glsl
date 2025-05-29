@@ -7,7 +7,7 @@ float globalSceneSDF(vec4 samplePoint, mat4 globalTransMatrix, bool collideWithL
   
   if(collideWithLights){
     //Light Objects
-    for(int i=0; i<4; i++){
+    for(int i=0; i<NUM_LIGHTS; i++){
       float objDist;
       if(lightIntensities[i].w == 0.0) { objDist = maxDist; }
       else{
@@ -81,11 +81,7 @@ vec4 estimateNormal(vec4 p) { // normal vector is in tangent hyperplane to hyper
     }
 }
 
-vec4 getRayPoint(vec2 resolution, vec2 fragCoord, bool isRight){ //creates a point that our ray will go through
-    if(isStereo == 1){
-      resolution.x = resolution.x * 0.5;
-      if(isRight) { fragCoord.x = fragCoord.x - resolution.x; }
-    }
+vec4 getRayPoint(vec2 resolution, vec2 fragCoord){ //creates a point that our ray will go through
     vec2 xy = 0.2*((fragCoord - 0.5*resolution)/resolution.x);
     float z = 0.1/tan(radians(fov*0.5));
     vec4 p =  geometryNormalize(vec4(xy,-z,1.0), false);
@@ -158,7 +154,7 @@ void raymarch(vec4 rO, vec4 rD, out mat4 totalFixMatrix){
     if(isOutsideCell(localEndPoint, fixMatrix)){
       totalFixMatrix *= fixMatrix;
       localrO = geometryNormalize(localEndPoint*fixMatrix, false);
-      localrD = geometryFixDirection(localrO, localrD, fixMatrix); 
+      localrD = geometryFixDirection(localrO, localrD, fixMatrix);
       localDepth = MIN_DIST;
     }
     else{
@@ -208,20 +204,7 @@ void main(){
   vec4 rayOrigin = ORIGIN;
   
   //stereo translations
-  bool isRight = gl_FragCoord.x/screenResolution.x > 0.5;
-  vec4 rayDirV = getRayPoint(screenResolution, gl_FragCoord.xy, isRight);
-  
-  if(isStereo == 1){
-    if(isRight){
-      rayOrigin *= stereoBoosts[1];
-      rayDirV *= stereoBoosts[1];
-    }
-    else{
-      rayOrigin *= stereoBoosts[0];
-      rayDirV *= stereoBoosts[0];
-    }
-    
-  }
+  vec4 rayDirV = getRayPoint(screenResolution, gl_FragCoord.xy);
 
   rayOrigin *= currentBoost;
   rayDirV *= currentBoost;

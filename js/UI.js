@@ -196,7 +196,7 @@ var initGui = function(){
 		toggleUI: true,
 		p:4,
 		q:3,
-		r:4,
+		r:6,
 		edgeThickness:1.0,
 		cutoutRadius:0.0,
 		eToHScale:5.0,
@@ -302,15 +302,27 @@ var initGui = function(){
 	});
 
 	pController.onFinishChange(function(value) {
+		var g = g_geometry;
 		updateUniformsFromUI();
+		if(g !== g_geometry){
+			updateShader();
+		}
 	});
 
 	qController.onFinishChange(function(value) {
+		var g = g_geometry;
 		updateUniformsFromUI();
+		if(g !== g_geometry){
+			updateShader();
+		}
 	});
 
 	rController.onFinishChange(function(value) {
+		var g = g_geometry;
 		updateUniformsFromUI();
+		if(g !== g_geometry){
+			updateShader();
+		}
 	});
 
 	thicknessController.onChange(function(value) {
@@ -355,12 +367,19 @@ var initGui = function(){
 	});
 
 	sceneController.onFinishChange(function(index){
-		var geoFrag = getGeometryFrag();
-		g_material.needsUpdate = true;
-		g_material.fragmentShader = globalsFrag.concat(lightingFrag).concat(geoFrag).concat(scenesFrag[index]).concat(mainFrag);
+		updateShader();
 	});
+
+
+
 }
 
+var updateShader = function(){
+	var geoFrag = getGeometryFrag();
+	var scnFrag = scenesFrag[guiInfo.sceneIndex];
+	g_material.needsUpdate = true;
+	g_material.fragmentShader = globalsFrag.concat(lightingFrag).concat(geoFrag).concat(scnFrag).concat(mainFrag);
+}
 
 
 var onResize = function(){
