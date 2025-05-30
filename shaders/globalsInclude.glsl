@@ -18,9 +18,10 @@ const vec4 ORIGIN = vec4(0,0,0,1);
 //--------------------------------------------
 vec4 sampleEndPoint = vec4(1, 1, 1, 1);
 vec4 sampleTangentVector = vec4(1, 1, 1, 1);
-vec4 N = ORIGIN; //normal vector
-vec4 globalLightColor = ORIGIN;
+vec4 N = ORIGIN; // normal vector
 int hitWhich = 0;
+vec4 hitColor = ORIGIN;
+mat4 hitInvGlobalObjectBoost = mat4(1.0);
 //-------------------------------------------
 //Translation & Utility Variables
 //--------------------------------------------
@@ -37,16 +38,17 @@ uniform float maxDist;
 //Lighting Variables & Global Object Variables
 //--------------------------------------------
 uniform vec4 lightPositions[NUM_LIGHTS];
-uniform vec4 lightIntensities[NUM_LIGHTS + 1]; //w component is the light's attenuation -- 5 for our controller
+uniform vec4 lightIntensities[NUM_LIGHTS]; // w component is the light's attenuation
 uniform int attnModel;
 uniform bool renderShadows[2];
 uniform float shadSoft;
 uniform sampler2D texture;
-uniform int controllerCount; //Max is two
-uniform mat4 controllerBoosts[2];
-uniform mat4 globalObjectBoosts[4];
-uniform mat4 invGlobalObjectBoosts[4]; 
-uniform vec3 globalObjectRadii[4];
+uniform mat4 globalObjectBoosts[NUM_OBJECTS];
+uniform mat4 invGlobalObjectBoosts[NUM_OBJECTS]; 
+uniform vec3 globalObjectRadii[NUM_OBJECTS];
+uniform vec4 globalObjectColors[NUM_OBJECTS];
+uniform vec4 gridColor;
+uniform bool showLightsAsObjects;
 //--------------------------------------------
 //Scene Dependent Variables
 //--------------------------------------------

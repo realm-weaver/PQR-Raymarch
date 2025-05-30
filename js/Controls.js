@@ -1,5 +1,6 @@
 THREE.Controls = function(done){
     var moveSpeed = 0.2;
+    var moveSpeedMultiplier = 2.0;
     var rotateSpeed = 0.4;
     var mouseSpeed = 0.25;
 
@@ -11,6 +12,10 @@ THREE.Controls = function(done){
     this.manualMoveRate = new Float32Array([0.0, 0.0, 0.0]);
 
     this.updateTime = 0;
+
+    this.ShiftActive = false;
+    this.ControlActive = false;
+    this.AltActive = false;
     
 
     this.manualControlsUnlocked = {
@@ -54,10 +59,15 @@ THREE.Controls = function(done){
         var deltaTime = (newTime - oldTime) * 0.001;
         var deltaPosition = new THREE.Vector3();
 
+        var speed = moveSpeed;
+        if(this.ShiftActive){
+            speed *= moveSpeedMultiplier;
+        }
+
         if(this.manualMoveRate[0] !== 0 || this.manualMoveRate[1] !== 0 || this.manualMoveRate[2] !== 0){
-            deltaPosition = getFwdVector().multiplyScalar(moveSpeed * deltaTime * this.manualMoveRate[0]).add(
-                getRightVector().multiplyScalar(moveSpeed * deltaTime * this.manualMoveRate[1])).add(
-                getUpVector().multiplyScalar(moveSpeed * deltaTime * this.manualMoveRate[2]));
+            deltaPosition = getFwdVector().multiplyScalar(speed * deltaTime * this.manualMoveRate[0]).add(
+                getRightVector().multiplyScalar(speed * deltaTime * this.manualMoveRate[1])).add(
+                getUpVector().multiplyScalar(speed * deltaTime * this.manualMoveRate[2]));
         }
         if(deltaPosition !== undefined){
             deltaPosition.multiplyScalar(guiInfo.eToHScale);
@@ -127,7 +137,6 @@ function key(event, sign){
         g_controls.manualMoveRate[control.index - 3] += sign * control.sign;
     }
 }
-
 document.addEventListener('keydown', function(event){key(event, 1);}, false);
 document.addEventListener('keyup', function(event){key(event, -1);}, false);
 
@@ -142,3 +151,19 @@ document.addEventListener('mousemove', (event) => {
         g_controls.mouseRotateRate[0] -= dy * g_controls.mouseSensitivity;
     }
 });
+
+
+
+
+
+function modifierKey(event, state){
+    if(event.keyCode == 16)             // Shift
+        g_controls.ShiftActive = state;
+    if(event.keyCode == 17)             // Control
+        g_controls.ControlActive = state;
+    if(event.keyCode == 18)             // Alt
+        g_controls.AltActive = state;
+
+}
+window.addEventListener("keydown", function(event){modifierKey(event, true);}, false);
+window.addEventListener("keyup", function(event){modifierKey(event, false);}, false);

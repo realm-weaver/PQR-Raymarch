@@ -1,8 +1,5 @@
 //GLOBAL OBJECTS SCENE ++++++++++++++++++++++++++++++++++++++++++++++++
 float globalSceneSDF(vec4 samplePoint, mat4 globalTransMatrix, bool collideWithLights){
-
-  return maxDist;
-
   float distance = maxDist;
   
   if(collideWithLights){
@@ -15,29 +12,13 @@ float globalSceneSDF(vec4 samplePoint, mat4 globalTransMatrix, bool collideWithL
         distance = min(distance, objDist);
         if(distance < EPSILON){
           hitWhich = 1;
-          globalLightColor = lightIntensities[i];
+          hitColor = lightIntensities[i];
           return distance;
         }
       }
     }
-    if(controllerCount != 0){
-      float objDist = sphereSDF(samplePoint, ORIGIN*controllerBoosts[0]*currentBoost, 1.0/(10.0 * lightIntensities[NUM_LIGHTS].w));
-      distance = min(distance, objDist);
-      if(distance < EPSILON){
-        hitWhich = 1;
-        globalLightColor = lightIntensities[NUM_LIGHTS];
-        return distance;
-      }
-    }
   }
-  if(controllerCount == 2){
-    float objDist = sphereSDF(samplePoint, ORIGIN*controllerBoosts[1]*currentBoost, 1.0/(10.0 * lightIntensities[NUM_LIGHTS].w));
-    distance = min(distance, objDist);
-    if(distance < EPSILON){
-      hitWhich = 2;
-      return distance;
-    }
-  }
+
   //Global Objects
   for(int i=0; i<NUM_OBJECTS; i++) {
     float objDist;
@@ -47,9 +28,13 @@ float globalSceneSDF(vec4 samplePoint, mat4 globalTransMatrix, bool collideWithL
       distance = min(distance, objDist);
       if(distance < EPSILON){
         hitWhich = 2;
+        hitColor = globalObjectColors[i];
+        hitInvGlobalObjectBoost = invGlobalObjectBoosts[i];
+        return distance;
       }
     }
   }
+
   return distance;
 }
 
@@ -57,7 +42,6 @@ float globalSceneSDF(vec4 samplePoint, mat4 globalTransMatrix, bool collideWithL
 vec4 estimateNormal(vec4 p) { // normal vector is in tangent hyperplane to hyperboloid at p
     // float denom = sqrt(1.0 + p.x*p.x + p.y*p.y + p.z*p.z);  // first, find basis for that tangent hyperplane
     float newEp = EPSILON * 10.0;
-    bool cwl = false;
     vec4 basis_x = geometryNormalize(vec4(p.w,0.0,0.0,p.x), true);  // dw/dx = x/w on hyperboloid
     vec4 basis_y = vec4(0.0,p.w,0.0,p.y);  // dw/dy = y/denom
     vec4 basis_z = vec4(0.0,0.0,p.w,p.z);  // dw/dz = z/denom  /// note that these are not orthonormal!
@@ -65,9 +49,9 @@ vec4 estimateNormal(vec4 p) { // normal vector is in tangent hyperplane to hyper
     basis_z = geometryNormalize(basis_z - geometryDot(basis_z, basis_x)*basis_x - geometryDot(basis_z, basis_y)*basis_y, true);
     if(hitWhich == 1 || hitWhich == 2){ //global light scene
       return geometryNormalize( //p+EPSILON*basis_x should be lorentz normalized however it is close enough to be good enough
-          basis_x * (globalSceneSDF(p + newEp*basis_x, invCellBoost, cwl) - globalSceneSDF(p - newEp*basis_x, invCellBoost, cwl)) +
-          basis_y * (globalSceneSDF(p + newEp*basis_y, invCellBoost, cwl) - globalSceneSDF(p - newEp*basis_y, invCellBoost, cwl)) +
-          basis_z * (globalSceneSDF(p + newEp*basis_z, invCellBoost, cwl) - globalSceneSDF(p - newEp*basis_z, invCellBoost, cwl)),
+          basis_x * (globalSceneSDF(p + newEp*basis_x, invCellBoost, showLightsAsObjects) - globalSceneSDF(p - newEp*basis_x, invCellBoost, showLightsAsObjects)) +
+          basis_y * (globalSceneSDF(p + newEp*basis_y, invCellBoost, showLightsAsObjects) - globalSceneSDF(p - newEp*basis_y, invCellBoost, showLightsAsObjects)) +
+          basis_z * (globalSceneSDF(p + newEp*basis_z, invCellBoost, showLightsAsObjects) - globalSceneSDF(p - newEp*basis_z, invCellBoost, showLightsAsObjects)),
           true
       );
     }
@@ -183,7 +167,7 @@ void raymarch(vec4 rO, vec4 rD, out mat4 totalFixMatrix){
     }
     fakeI++;
     vec4 globalEndPoint = pointOnGeodesic(rO, rD, globalDepth);
-    float globalDist = globalSceneSDF(globalEndPoint, invCellBoost, true);
+    float globalDist = globalSceneSDF(globalEndPoint, invCellBoost, showLightsAsObjects);
     AddToSeriesRecord(seriesRecord, globalDist);
     globalDist = GetSeriesDistance(seriesRecord);
     if(globalDist < EPSILON){
@@ -220,7 +204,7 @@ void main(){
     return;
   }
   else if(hitWhich == 1){ // global lights
-    gl_FragColor = vec4(globalLightColor.rgb, 1.0);
+    gl_FragColor = vec4(hitColor.rgb, 1.0);
     return;
   }
   else{ // objects
@@ -228,9 +212,9 @@ void main(){
     vec3 color;
     mat4 globalTransMatrix = invCellBoost * totalFixMatrix;
     if(hitWhich == 2){ // global objects
-      color = phongModel(invGlobalObjectBoosts[0], true, globalTransMatrix);
+      color = phongModel(hitColor, hitInvGlobalObjectBoost, true, globalTransMatrix);
     }else{ // local objects
-      color = phongModel(mat4(1.0), false, globalTransMatrix);
+      color = phongModel(gridColor, mat4(1.0), false, globalTransMatrix);
     }
     gl_FragColor = vec4(color, 1.0);
   }

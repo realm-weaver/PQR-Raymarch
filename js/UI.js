@@ -248,7 +248,6 @@ var initGui = function(){
 			g_currentBoost.identity();
 			g_cellBoost.identity();
 			g_invCellBoost.identity();
-			g_controllerBoosts[0].identity();
 		},
 		takeScreenshot: function(){
 		    // Set custom resolution
@@ -290,7 +289,7 @@ var initGui = function(){
 
 		    // Execute download
 		    var scn = getSceneName(this.sceneIndex);
-		    link.download = timestamp + " - {" + this.p + "," + this.r + "," + this.q + "}" + (scn == "" ? "" : " --" + scn) + ".png";
+		    link.download = "{" + this.p + "," + this.r + "," + this.q + "}" + (scn == "" ? "" : " --" + scn) + " --- " + timestamp +".png";
 		    link.href = dataURL;
 		    link.click();
 		},
@@ -424,15 +423,18 @@ var initGui = function(){
 		var crosshair = document.getElementById("crosshair");
 		var fps = document.getElementById("fps");
 		var about = document.getElementById("about");
+		var consoleArea = document.getElementById("debug-console");
 		if(value) {
 			about.style.visibility = 'visible';
 			fps.style.visibility = 'visible';
 			crosshair.style.visibility = 'visible';
+			consoleArea.style.visibility = 'visible';
 		}
 		else {
 			about.style.visibility = 'hidden';
 			fps.style.visibility = 'hidden';
 			crosshair.style.visibility = 'hidden';
+			consoleArea.style.visibility = 'hidden';
 		}
 	});
 
@@ -482,10 +484,9 @@ var onKeyDown = function(event){
         guiInfo.togglePointer();
     if(event.keyCode == 88)				// X
         console.log("X");
+
 }
-
 window.addEventListener("keydown", onKeyDown, false);
-
 
 
 

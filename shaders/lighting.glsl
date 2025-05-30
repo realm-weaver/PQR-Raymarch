@@ -113,25 +113,25 @@ vec3 lightingCalculations(vec4 SP, vec4 TLP, vec4 V, vec3 baseColor, vec4 lightI
   return att*(shadow*((diffuse*baseColor) + specular));
 }
 
-vec3 phongModel(mat4 invObjectBoost, bool isGlobal, mat4 globalTransMatrix){
+vec3 phongModel(vec4 objectColor, mat4 invObjectBoost, bool isGlobal, mat4 globalTransMatrix){
   //--------------------------------------------
   //Setup Variables
   //--------------------------------------------
   float ambient = 0.1;
-  vec3 baseColor = vec3(0.0,1.0,1.0);
+  vec3 baseColor = objectColor.rgb * objectColor.a;
   vec4 SP = sampleEndPoint;
   vec4 TLP;
   vec4 V = -sampleTangentVector;
 
   if(isGlobal){ //this may be possible to move outside function as we already have an if statement for global v. local
-    baseColor = texcube(SP, cellBoost * invObjectBoost).xyz; 
+    baseColor *= texcube(SP, cellBoost * invObjectBoost).xyz; 
   }
   else{
-    baseColor = texcube(SP, mat4(1.0)).xyz;
+    baseColor *= texcube(SP, mat4(1.0)).xyz;
   }
 
   //Setup up color with ambient component
-  vec3 color = baseColor * ambient; 
+  vec3 color = baseColor * ambient;
 
   //--------------------------------------------
   //Lighting Calculations
@@ -139,15 +139,9 @@ vec3 phongModel(mat4 invObjectBoost, bool isGlobal, mat4 globalTransMatrix){
   //Standard Light Objects
   for(int i = 0; i<NUM_LIGHTS; i++){
     if(lightIntensities[i].w != 0.0){
-      TLP = lightPositions[i]*globalTransMatrix;
+      TLP = lightPositions[i] * globalTransMatrix;
       color += lightingCalculations(SP, TLP, V, baseColor, lightIntensities[i], globalTransMatrix);
     }
-  }
-
-  //Light for Controller
-  if(controllerCount != 0){
-    TLP = ORIGIN*controllerBoosts[0]*currentBoost*cellBoost*globalTransMatrix;
-    color += lightingCalculations(SP, TLP, V, baseColor, lightIntensities[NUM_LIGHTS], globalTransMatrix);
   }
 
   return color;

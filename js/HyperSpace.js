@@ -9,8 +9,6 @@ var g_currentBoost;
 var g_cellBoost;
 var g_invCellBoost;
 var g_screenResolution;
-var g_controllerBoosts = [];
-var g_controllerDualPoints = [];
 
 
 
@@ -175,10 +173,6 @@ var initGenerators = function( p, q, r ){
 
 		gens = invGens;
 	}
-
-	for(var i = 0; i<6; i++){
-		g_controllerDualPoints.push(new THREE.Vector4());
-	}
 }
 
 var createCubeGenerators = function(g){
@@ -219,9 +213,6 @@ var initLights = function(g){
 	PointLightObject(g, new THREE.Vector3(0, 0, -distanceFromOrigo), new THREE.Vector4(0, 0, 1, lightIntensity));
 
 	//PointLightObject(g, new THREE.Vector3(0, 0, 0), new THREE.Vector4(1, 1, 1, lightIntensity * 3));
-	
-	//Add light info for controllers
-	lightIntensities.push(new THREE.Vector4(1,1,1,1));
 }
 
 //-------------------------------------------------------
@@ -231,6 +222,7 @@ var globalObjectBoosts = [];
 var invGlobalObjectBoosts = [];
 var globalObjectRadii = [];
 var globalObjectTypes = [];
+var globalObjectColors = [];
 
 //TODO: CREATE GLOBAL OBJECT CONSTRUCTORS
 var initObjects = function(g){
@@ -238,15 +230,10 @@ var initObjects = function(g){
 	invGlobalObjectBoosts = [];
 	globalObjectRadii = [];
 	globalObjectTypes = [];
+	globalObjectColors = [];
 
-	for(var i = 0; i<4; i++){ // We need to fill out our arrays with empty objects for glsl to be happy
-		EmptyObject();
-	}
-	/*
-	SphereObject(g, new THREE.Vector3(0,-0.7,0), 0.2); // geometry, position, radius/radii
-	for(var i = 1; i<4; i++){ // We need to fill out our arrays with empty objects for glsl to be happy
-		EmptyObject();
-	}*/
+	SphereObject(g, new THREE.Vector3(0,-0.5,0), new THREE.Vector4(1, 0, 1, 1), 0.2); // geometry, position, color, .. parameters ...
+	SphereObject(g, new THREE.Vector3(0,+0.5,0), new THREE.Vector4(0, 1, 0, 1), 0.1);
 }
 
 //-------------------------------------------------------
@@ -267,8 +254,6 @@ var init = function(){
 	camera = new THREE.OrthographicCamera(-1,1,1,-1,1/Math.pow(2,53),1);
 	g_controls = new THREE.Controls();
 	g_rotation = new THREE.Quaternion();
-	g_controllerBoosts.push(new THREE.Matrix4());
-	g_controllerBoosts.push(new THREE.Matrix4());
 	g_currentBoost = new THREE.Matrix4(); // boost for camera relative to central cell
 	g_cellBoost = new THREE.Matrix4(); // boost for the cell that we are in relative to where we started
 	g_invCellBoost = new THREE.Matrix4();
@@ -346,14 +331,13 @@ var finishInit = function(fShader){
 			attnModel:{type:"i", value:attnModel},
 			renderShadows:{type:"bv", value:[false, false]},
 			shadSoft:{type:"f", value:128.0},
-			//texture:{type:"t", value: new THREE.TextureLoader().load("images/concrete2.png")},
-			 texture:{type:"t", value: new THREE.TextureLoader().load("images/white.png")},	 
-			controllerCount:{type:"i", value: 0},
-			controllerBoosts:{type:"m4", value:g_controllerBoosts},
-			//controllerDualPoints:{type:"v4v", value:g_controllerDualPoints},
+			texture:{type:"t", value: new THREE.TextureLoader().load("images/white.png")},
 			globalObjectBoosts:{type:"m4v", value:globalObjectBoosts},
 			invGlobalObjectBoosts:{type:"m4v", value:invGlobalObjectBoosts},
 			globalObjectRadii:{type:"v3v", value:globalObjectRadii},
+			globalObjectColors:{type:"v4v", value:globalObjectColors},
+			gridColor:{type:"v4", value:new THREE.Vector4(1.0, 0.8, 0.6, 1)},
+			showLightsAsObjects:{type:"b", value:false},
 			halfCubeDualPoints:{type:"v4v", value:hCDP},
 			halfCubeWidthKlein:{type:"f", value: hCWK},
 			cut1:{type:"i", value:g_cut1},
@@ -374,14 +358,13 @@ var finishInit = function(fShader){
 		},
 		vertexShader: document.getElementById('vertexShader').textContent,
 		fragmentShader: fShader,
-		transparent:true
+		transparent: true
 	});
 	
-	
-	
+
 	
 	var tab = "&nbsp;&nbsp;&nbsp;&nbsp;";
-	
+	/*
 	LOG_MESSAGE("geometry: " + 3);
 	LOG_MESSAGE("screenResolution: " + TO_STRING__Vector2(g_screenResolution));
 	LOG_MESSAGE("fov: " + 90);
@@ -400,9 +383,7 @@ var finishInit = function(fShader){
 	LOG_MESSAGE("attnModel: " + attnModel);
 	LOG_MESSAGE("renderShadows: " + [false, false]);
 	LOG_MESSAGE("shadSoft: " + 128.0);
-	LOG_MESSAGE("controllerCount: " + 0);
-	
-	LOG_MESSAGE("controllerBoosts: " + g_controllerBoosts);						//
+
 	LOG_MESSAGE("globalObjectBoosts: " + globalObjectBoosts);					//
 	LOG_MESSAGE("invGlobalObjectBoosts: " + invGlobalObjectBoosts);				//
 	LOG_MESSAGE("globalObjectRadii: " + globalObjectRadii);						//
@@ -421,7 +402,7 @@ var finishInit = function(fShader){
 	
 	LOG_MESSAGE("simplexMirrorsKlein: " + simplexMirrors);						//
 	LOG_MESSAGE("simplexDualPoints: " + simplexDualPoints);						//
-	
+	*/
 	/*LOG_MESSAGE("????????: " + 0);
 	LOG_MESSAGE("("????????:: " + 0);
 	LOG_MESSAGE("("????????:: " + 0);*/
