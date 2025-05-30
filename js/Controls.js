@@ -111,6 +111,16 @@ THREE.Controls = function(done){
         g_currentBoost.gramSchmidt(g_geometry);
     };
 
+
+    this.turnAround = function(){
+        var flipY = new THREE.Quaternion(0, 1, 0, 0);
+        g_rotation.multiply(flipY);
+        m = new THREE.Matrix4().makeRotationFromQuaternion(flipY.inverse());
+        g_currentBoost.premultiply(m);
+        
+        g_currentBoost.gramSchmidt(g_geometry);
+    }
+
 };
 
 

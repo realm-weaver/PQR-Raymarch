@@ -224,8 +224,6 @@ var initGui = function(){
 		autoSteps:true,
 		maxStepsPower: 6.0,
 		falloffModel: 1,
-		renderShadows: 0,
-		shadowSoftness: 0,
 
 
 
@@ -332,8 +330,6 @@ var initGui = function(){
 	var scaleController = gui.add(guiInfo, 'eToHScale', 0.1,10).name("Euclid To Hyp");
 	var fovController = gui.add(guiInfo, 'fov',0,180).name("FOV");
 	var lightFalloffController = gui.add(guiInfo, 'falloffModel', {InverseLinear: 1, InverseSquare:2, InverseCube:3, Physical: 4, None:5}).name("Light Falloff");
-	var shadowController = gui.add(guiInfo, 'renderShadows', {NoShadows: 0, Local: 1, Global: 2, LocalAndGlobal: 3}).name("Shadows");
-	var softnessController = gui.add(guiInfo, 'shadowSoftness', 0,0.25).name("Shadow Softness");
 	gui.add(guiInfo, 'resetPosition').name("Reset Position");
 
 	//debug settings ---------------------------------
@@ -350,35 +346,7 @@ var initGui = function(){
 	lightFalloffController.onFinishChange(function(value){
 		updateUniformsFromUI();
 	});
-
-	shadowController.onFinishChange(function(value){
-		if(value == 0){
-			g_material.uniforms.renderShadows.value[0] = false;
-			g_material.uniforms.renderShadows.value[1] = false;
-		}
-		else if(value == 1){ //Local
-			g_material.uniforms.renderShadows.value[0] = true;
-			g_material.uniforms.renderShadows.value[1] = false;
-		}
-		else if(value == 2){ //Global
-			g_material.uniforms.renderShadows.value[0] = false;
-			g_material.uniforms.renderShadows.value[1] = true;
-		}
-		else{ //Local and Global
-			g_material.uniforms.renderShadows.value[0] = true;
-			g_material.uniforms.renderShadows.value[1] = true;
-		}
-	});
-
-	softnessController.onChange(function(value){
-		if(value === 0.0){
-			g_material.uniforms.shadSoft.value = 128.0;
-		}
-		else{
-			g_material.uniforms.shadSoft.value = 1.0/value;
-		}
-	});
-
+	
 	pController.onFinishChange(function(value) {
 		var g = g_geometry;
 		updateUniformsFromUI();

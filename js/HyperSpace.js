@@ -329,8 +329,6 @@ var finishInit = function(fShader){
 			lightPositions:{type:"v4v", value:lightPositions},
 			lightIntensities:{type:"v3v", value:lightIntensities},
 			attnModel:{type:"i", value:attnModel},
-			renderShadows:{type:"bv", value:[false, false]},
-			shadSoft:{type:"f", value:128.0},
 			texture:{type:"t", value: new THREE.TextureLoader().load("images/white.png")},
 			globalObjectBoosts:{type:"m4v", value:globalObjectBoosts},
 			invGlobalObjectBoosts:{type:"m4v", value:invGlobalObjectBoosts},
@@ -379,10 +377,7 @@ var finishInit = function(fShader){
 	
 	LOG_MESSAGE("lightPositions: " + lightPositions);							//
 	LOG_MESSAGE("lightIntensities: " + lightIntensities);						//
-	
 	LOG_MESSAGE("attnModel: " + attnModel);
-	LOG_MESSAGE("renderShadows: " + [false, false]);
-	LOG_MESSAGE("shadSoft: " + 128.0);
 
 	LOG_MESSAGE("globalObjectBoosts: " + globalObjectBoosts);					//
 	LOG_MESSAGE("invGlobalObjectBoosts: " + invGlobalObjectBoosts);				//

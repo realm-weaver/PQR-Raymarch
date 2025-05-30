@@ -40,8 +40,6 @@ uniform float maxDist;
 uniform vec4 lightPositions[NUM_LIGHTS];
 uniform vec4 lightIntensities[NUM_LIGHTS]; // w component is the light's attenuation
 uniform int attnModel;
-uniform bool renderShadows[2];
-uniform float shadSoft;
 uniform sampler2D texture;
 uniform mat4 globalObjectBoosts[NUM_OBJECTS];
 uniform mat4 invGlobalObjectBoosts[NUM_OBJECTS]; 
