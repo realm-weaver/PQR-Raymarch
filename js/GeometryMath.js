@@ -306,6 +306,14 @@ var PointLightObject = function(g, pos, colorInt){ //position is a euclidean Vec
   lightIntensities.push(colorInt);
 }
 
+var EmptyObject = function(){
+  globalObjectBoosts.push(new THREE.Matrix4());
+  invGlobalObjectBoosts.push(new THREE.Matrix4());
+  globalObjectRadii.push(new THREE.Vector3(0,0,0));
+  globalObjectTypes.push(-1);
+  globalObjectColors.push(new THREE.Vector4(0,0,0,1));
+}
+
 var SphereObject = function(g, pos, color, radius){
   var objMat = new THREE.Matrix4().multiply(translateByVector(g, pos));
   globalObjectBoosts.push(objMat);

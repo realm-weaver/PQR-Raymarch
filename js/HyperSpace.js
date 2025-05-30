@@ -232,8 +232,10 @@ var initObjects = function(g){
 	globalObjectTypes = [];
 	globalObjectColors = [];
 
-	SphereObject(g, new THREE.Vector3(0,-0.5,0), new THREE.Vector4(1, 0, 1, 1), 0.2); // geometry, position, color, .. parameters ...
-	SphereObject(g, new THREE.Vector3(0,+0.5,0), new THREE.Vector4(0, 1, 0, 1), 0.1);
+	/*SphereObject(g, new THREE.Vector3(0,-0.5,0), new THREE.Vector4(1, 0, 1, 1), 0.2); // geometry, position, color, .. parameters ...
+	SphereObject(g, new THREE.Vector3(0,+0.5,0), new THREE.Vector4(0, 1, 0, 1), 0.1);*/
+
+	EmptyObject();
 }
 
 //-------------------------------------------------------
