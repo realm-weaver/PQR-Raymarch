@@ -150,7 +150,7 @@ function TilePoints( q, p )
 }
 
 /// Calculates the 3 mirrors connected to the cell center.
-/// This works in all geometries and returns results in the UHS model (or the appropriate analogue).
+/// This works in all geometries and returns results in the UHS = Upper Half Plane model (or the appropriate analogue).
 function InteriorMirrors( p, q )
 {
   // Some construction points we need.
@@ -375,5 +375,6 @@ function SimplexInverseGenerators( g, kleinFacets )
     OneGen( g, kleinFacets[0] ), 
     OneGen( g, kleinFacets[1] ), 
     OneGen( g, kleinFacets[2] ), 
-    OneGen( g, kleinFacets[3] ) ]; 
+    OneGen( g, kleinFacets[3] )
+  ]; 
 }

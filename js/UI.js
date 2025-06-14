@@ -207,6 +207,8 @@ function updateUniformsFromUI()
 	g_material.uniforms.useSimplex.value = !isCubical;
 	g_material.uniforms.simplexMirrorsKlein.value = simplexMirrors;
 	g_material.uniforms.simplexDualPoints.value = simplexDualPoints;
+
+	LOG_INFO();
 }
 
 //What we need to init our dat GUI

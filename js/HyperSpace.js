@@ -27,6 +27,7 @@ var maxDist = 100.0;		// originally = 100.0
 var textFPS;
 var DebugConsole;
 var time;
+var gridColor = new THREE.Vector4(1,1,1,1);
 
 //-------------------------------------------------------
 // FPS Manager
@@ -133,6 +134,8 @@ var simplexDualPoints = [];
 var initGenerators = function( p, q, r ){
 	g_geometry = GetGeometry( p, q, r );
 	var isCubical = p == 4 && q == 3;
+
+	//isCubical = false;
 
 	if( isCubical )
 	{
@@ -282,37 +285,36 @@ var loadShaders = function(){ //Since our shader is made up of strings we can co
 			loader.load('shaders/geometries/hyperbolic.glsl', function(hyperbolic){
 				loader.load('shaders/lighting.glsl', function(lighting){
 					loader.load('shaders/globalsInclude.glsl', function(globals){
-					//pass full shader string to finish our init
-					globalsFrag = globals;
-					lightingFrag = lighting;
-					geometryFrag.push(hyperbolic);
-					scenesFrag.push(scene);
-					mainFrag = main;
-					finishInit(globals.concat(lighting).concat(hyperbolic).concat(scene).concat(main));
-					loader.load('shaders/shapes/edgeTubes.glsl', function(tubes){
-						loader.load('shaders/shapes/medialSurfaces.glsl', function(medial){
-							loader.load('shaders/shapes/cubeSides.glsl', function(cubes){
-								loader.load('shaders/shapes/TEST_SimplexCuts.glsl', function(testSimplex){
-									scenesFrag.push(tubes);
-									scenesFrag.push(medial);
-									scenesFrag.push(cubes);
-									scenesFrag.push(testSimplex);
+						//pass full shader string to finish our init
+						globalsFrag = globals;
+						lightingFrag = lighting;
+						geometryFrag.push(hyperbolic);
+						scenesFrag.push(scene);
+						mainFrag = main;
+						finishInit(globals.concat(lighting).concat(hyperbolic).concat(scene).concat(main));
+						loader.load('shaders/shapes/edgeTubes.glsl', function(tubes){
+							loader.load('shaders/shapes/medialSurfaces.glsl', function(medial){
+								loader.load('shaders/shapes/cubeSides.glsl', function(cubes){
+									loader.load('shaders/shapes/TEST_SimplexCuts.glsl', function(testSimplex){
+										scenesFrag.push(tubes);
+										scenesFrag.push(medial);
+										scenesFrag.push(cubes);
+										scenesFrag.push(testSimplex);
+									});
 								});
 							});
 						});
-					});
-					loader.load('shaders/geometries/euclidean.glsl', function(euclidean){
-						loader.load('shaders/geometries/spherical.glsl', function(spherical){
-							geometryFrag.push(euclidean);
-							geometryFrag.push(spherical);
+						loader.load('shaders/geometries/euclidean.glsl', function(euclidean){
+							loader.load('shaders/geometries/spherical.glsl', function(spherical){
+								geometryFrag.push(euclidean);
+								geometryFrag.push(spherical);
+							});
 						});
 					});
 				});
 			});
-			});
 		});
 	});
-	
 }
 
 var finishInit = function(fShader){
@@ -336,7 +338,7 @@ var finishInit = function(fShader){
 			invGlobalObjectBoosts:{type:"m4v", value:invGlobalObjectBoosts},
 			globalObjectRadii:{type:"v3v", value:globalObjectRadii},
 			globalObjectColors:{type:"v4v", value:globalObjectColors},
-			gridColor:{type:"v4", value:new THREE.Vector4(1.0, 0.8, 0.6, 1)},
+			gridColor:{type:"v4", value:gridColor},
 			showLightsAsObjects:{type:"b", value:false},
 			halfCubeDualPoints:{type:"v4v", value:hCDP},
 			halfCubeWidthKlein:{type:"f", value: hCWK},
@@ -363,46 +365,6 @@ var finishInit = function(fShader){
 	
 
 	
-	var tab = "&nbsp;&nbsp;&nbsp;&nbsp;";
-	/*
-	LOG_MESSAGE("geometry: " + 3);
-	LOG_MESSAGE("screenResolution: " + TO_STRING__Vector2(g_screenResolution));
-	LOG_MESSAGE("fov: " + 90);
-	LOG_MESSAGE("invGenerators: {<br/>" + TO_STRING__Matrix4(invGens[0], tab) + ",<br/>" + TO_STRING__Matrix4(invGens[1], tab) + ",<br/>" + TO_STRING__Matrix4(invGens[2], tab) + ",<br/>" + TO_STRING__Matrix4(invGens[3], tab) + ",<br/>" + TO_STRING__Matrix4(invGens[4], tab) + ",<br/>" + TO_STRING__Matrix4(invGens[5], tab) + "<br/>}");
-	
-	LOG_MESSAGE("currentBoost: " + TO_STRING__Matrix4(g_currentBoost));
-	LOG_MESSAGE("cellBoost: " + TO_STRING__Matrix4(g_cellBoost));
-	LOG_MESSAGE("invCellBoost: " + TO_STRING__Matrix4(g_invCellBoost));
-	
-	LOG_MESSAGE("maxSteps: " + maxSteps);
-	LOG_MESSAGE("maxDist: " + maxDist);
-	
-	LOG_MESSAGE("lightPositions: " + lightPositions);							//
-	LOG_MESSAGE("lightIntensities: " + lightIntensities);						//
-	LOG_MESSAGE("attnModel: " + attnModel);
-
-	LOG_MESSAGE("globalObjectBoosts: " + globalObjectBoosts);					//
-	LOG_MESSAGE("invGlobalObjectBoosts: " + invGlobalObjectBoosts);				//
-	LOG_MESSAGE("globalObjectRadii: " + globalObjectRadii);						//
-	LOG_MESSAGE("halfCubeDualPoints: " + hCDP);									//
-	
-	LOG_MESSAGE("halfCubeWidthKlein: " + hCWK);
-	LOG_MESSAGE("cut1: " + g_cut1);
-	LOG_MESSAGE("cut4: " + g_cut4);
-	LOG_MESSAGE("tubeRad: " + g_tubeRad);
-	LOG_MESSAGE("cutoutRad: " + g_cutoutRad);
-	LOG_MESSAGE("cellPosition: " + TO_STRING__Vector4(g_cellPosition));
-	LOG_MESSAGE("cellSurfaceOffset: " + g_cellSurfaceOffset);
-	LOG_MESSAGE("vertexPosition: " + TO_STRING__Vector4(g_vertexPosition));
-	LOG_MESSAGE("vertexSurfaceOffset: " + g_vertexSurfaceOffset);
-	LOG_MESSAGE("useSimplex: " + false);
-	
-	LOG_MESSAGE("simplexMirrorsKlein: " + simplexMirrors);						//
-	LOG_MESSAGE("simplexDualPoints: " + simplexDualPoints);						//
-	*/
-	/*LOG_MESSAGE("????????: " + 0);
-	LOG_MESSAGE("("????????:: " + 0);
-	LOG_MESSAGE("("????????:: " + 0);*/
 
 	onResize();
 
@@ -426,6 +388,34 @@ var finishInit = function(fShader){
 	animate();
 }
 
+
+var LOG_INFO = function(){
+	var tab = "&nbsp;&nbsp;&nbsp;&nbsp;";
+	
+	LOG_MESSAGE("geometry: " + 3);
+	LOG_MESSAGE("invGenerators: {<br/>" + TO_STRING__Matrix4(invGens[0], tab) + ",<br/>" + TO_STRING__Matrix4(invGens[1], tab) + ",<br/>" + TO_STRING__Matrix4(invGens[2], tab) + ",<br/>" + TO_STRING__Matrix4(invGens[3], tab) + ",<br/>" + TO_STRING__Matrix4(invGens[4], tab) + ",<br/>" + TO_STRING__Matrix4(invGens[5], tab) + "<br/>}");
+	
+	LOG_MESSAGE("currentBoost: " + TO_STRING__Matrix4(g_currentBoost));
+	LOG_MESSAGE("cellBoost: " + TO_STRING__Matrix4(g_cellBoost));
+	LOG_MESSAGE("invCellBoost: " + TO_STRING__Matrix4(g_invCellBoost));
+
+	LOG_MESSAGE("halfCubeDualPoints: " + TO_STRING__Vector3(hCDP));
+	LOG_MESSAGE("halfCubeWidthKlein: " + hCWK);
+	/*
+	LOG_MESSAGE("cut1: " + g_cut1);
+	LOG_MESSAGE("cut4: " + g_cut4);
+	LOG_MESSAGE("tubeRad: " + g_tubeRad);
+	LOG_MESSAGE("cutoutRad: " + g_cutoutRad);
+	*/
+	LOG_MESSAGE("cellPosition: " + TO_STRING__Vector4(g_cellPosition));
+	LOG_MESSAGE("cellSurfaceOffset: " + g_cellSurfaceOffset);
+	LOG_MESSAGE("vertexPosition: " + TO_STRING__Vector4(g_vertexPosition));
+	LOG_MESSAGE("vertexSurfaceOffset: " + g_vertexSurfaceOffset);
+	LOG_MESSAGE("useSimplex: " + false);
+	
+	LOG_MESSAGE("simplexMirrorsKlein: " + simplexMirrors);
+	LOG_MESSAGE("simplexDualPoints: " + simplexDualPoints);
+}
 
 
 //-------------------------------------------------------

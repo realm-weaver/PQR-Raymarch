@@ -149,7 +149,7 @@ function Pi_hpq(p, q)
 
 var m_euclideanScale = 1.0;
 
-// Returns the in-radius of a {p,q,r} honeycomb, in the induced geometry
+// Returns the in-radius of a {p,q,r} honeycomb, in the induced geometry (center to face distance)
 function InRadius(p, q, r)
 {
 	var pip = PiOverNSafe(p);
@@ -169,7 +169,7 @@ function InRadius(p, q, r)
 	}
 }
 
-// Returns the mid-radius of a {p,q,r} honeycomb, in the induced geometry
+// Returns the mid-radius of a {p,q,r} honeycomb, in the induced geometry (center to edge distance)
 function MidRadius(p, q, r)
 {
 	var pir = PiOverNSafe(r);
